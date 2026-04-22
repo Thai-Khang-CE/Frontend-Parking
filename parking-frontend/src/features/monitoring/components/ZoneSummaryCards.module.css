@@ -1,0 +1,92 @@
+/**
+ * ZoneSummaryCards Styling (CSS Module)
+ */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.card {
+  padding: 20px;
+  background-color: #fff;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card.total {
+  border-color: #3498db;
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(52, 152, 219, 0.02) 100%);
+}
+
+.card.occupied {
+  border-color: #e74c3c;
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.05) 0%, rgba(231, 76, 60, 0.02) 100%);
+}
+
+.card.available {
+  border-color: #2ecc71;
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.05) 0%, rgba(46, 204, 113, 0.02) 100%);
+}
+
+.card.occupancy {
+  border-color: #f39c12;
+  background: linear-gradient(135deg, rgba(243, 156, 18, 0.05) 0%, rgba(243, 156, 18, 0.02) 100%);
+}
+
+.value {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.card.total .value {
+  color: #3498db;
+}
+
+.card.occupied .value {
+  color: #e74c3c;
+}
+
+.card.available .value {
+  color: #2ecc71;
+}
+
+.card.occupancy .value {
+  color: #f39c12;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .value {
+    font-size: 24px;
+  }
+}

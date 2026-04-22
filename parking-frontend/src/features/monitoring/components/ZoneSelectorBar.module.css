@@ -1,0 +1,63 @@
+/**
+ * ZoneSelectorBar Styling (CSS Module)
+ */
+
+.container {
+  background-color: #fff;
+  border: 1px solid #ecf0f1;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.button {
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: #f8f9fa;
+  color: #2c3e50;
+  border: 2px solid #ecf0f1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  border-color: #3498db;
+  background-color: #ecf7ff;
+}
+
+.button.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+@media (max-width: 768px) {
+  .buttonGroup {
+    gap: 8px;
+  }
+
+  .button {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}

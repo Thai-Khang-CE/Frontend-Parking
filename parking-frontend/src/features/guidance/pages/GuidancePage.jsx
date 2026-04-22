@@ -3,59 +3,86 @@
  * Driver guidance interface - shows parking recommendations
  */
 
+import { useGuidance } from '../hooks';
+import { PreferredZoneCard, GuidanceMessageBox, AlternativeZonesGrid } from '../components';
+import styles from './GuidancePage.module.css';
+
 function GuidancePage() {
+  const { data, loading, error, requestGuidance } = useGuidance();
+
+  if (error) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <h1>Parking Guidance</h1>
+        </div>
+        <div className={styles.error}>
+          <p>Error loading guidance: {error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading && !data) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <h1>Parking Guidance</h1>
+        </div>
+        <div className={styles.loading}>
+          <div className={styles.spinner} />
+          <p>Loading guidance...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <h1>Parking Guidance</h1>
+        </div>
+        <div className={styles.empty}>
+          <p>No guidance available</p>
+          <button className={`${styles.button} ${styles.primaryButton}`} onClick={requestGuidance}>
+            Get Guidance
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <h1>Parking Guidance</h1>
-      <p>Get parking recommendations and directions</p>
+    <div className={styles.page}>
+      <div className={styles.header}>
+        <h1>Parking Guidance</h1>
+        <p className={styles.subtitle}>Find your perfect parking spot</p>
+      </div>
 
-      <section style={{ marginTop: '30px', padding: '20px', backgroundColor: '#d4edda', borderRadius: '6px', borderLeft: '4px solid #28a745' }}>
-        <h2>Recommended Zone</h2>
-        <div style={{ fontSize: '48px', fontWeight: 'bold', color: '#2ecc71', margin: '20px 0' }}>
-          Zone B
-        </div>
-        <p style={{ fontSize: '18px', color: '#2c3e50' }}>10 spots available</p>
-      </section>
+      <div className={styles.content}>
+        {/* Preferred Zone - Prominent Display */}
+        <PreferredZoneCard zone={data.preferredZone} status={data.status} />
 
-      <section style={{ marginTop: '20px', padding: '20px', backgroundColor: '#d1ecf1', borderRadius: '6px', borderLeft: '4px solid #17a2b8' }}>
-        <h2>Guidance Message</h2>
-        <p style={{ fontSize: '16px', lineHeight: '1.6' }}>
-          Proceed to Zone B. 10 spots available. Follow directional signage to parking area.
-        </p>
-      </section>
+        {/* Main Guidance Message */}
+        <GuidanceMessageBox message={data.guidanceMessage} signageMessage={data.signageMessage} />
 
-      <section style={{ marginTop: '20px', padding: '20px', backgroundColor: '#ecf0f1', borderRadius: '6px' }}>
-        <h2>Alternative Zones</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '15px', marginTop: '15px' }}>
-          <div style={{ padding: '15px', backgroundColor: '#fff', border: '1px solid #bdc3c7', borderRadius: '4px' }}>
-            <div style={{ fontWeight: 'bold' }}>Zone C</div>
-            <div style={{ fontSize: '12px', color: '#7f8c8d', marginTop: '5px' }}>5 spots available</div>
-          </div>
-          <div style={{ padding: '15px', backgroundColor: '#fff', border: '1px solid #bdc3c7', borderRadius: '4px' }}>
-            <div style={{ fontWeight: 'bold' }}>Zone D</div>
-            <div style={{ fontSize: '12px', color: '#7f8c8d', marginTop: '5px' }}>10 spots available</div>
-          </div>
-        </div>
-      </section>
+        {/* Alternative Zones */}
+        {data.alternativeZones && data.alternativeZones.length > 0 && (
+          <AlternativeZonesGrid zones={data.alternativeZones} />
+        )}
+      </div>
 
-      <button
-        style={{
-          marginTop: '30px',
-          padding: '12px 24px',
-          fontSize: '16px',
-          fontWeight: 'bold',
-          backgroundColor: '#3498db',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          transition: 'background-color 0.3s ease'
-        }}
-        onMouseEnter={(e) => e.target.style.backgroundColor = '#2980b9'}
-        onMouseLeave={(e) => e.target.style.backgroundColor = '#3498db'}
-      >
-        Get Guidance
-      </button>
+      {/* Action Buttons */}
+      <div className={styles.actions}>
+        <button
+          className={`${styles.button} ${styles.primaryButton}`}
+          onClick={requestGuidance}
+          disabled={loading}
+        >
+          {loading ? 'Loading...' : 'Get New Guidance'}
+        </button>
+      </div>
     </div>
   );
 }

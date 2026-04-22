@@ -1,0 +1,123 @@
+/**
+ * SlotGrid Styling (CSS Module)
+ */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.slot {
+  padding: 16px 8px;
+  background-color: #f8f9fa;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  user-select: none;
+}
+
+.slot:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.slotNumber {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.slotStatus {
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.duration {
+  font-size: 10px;
+  font-weight: 600;
+  color: #7f8c8d;
+  margin-top: 4px;
+}
+
+/* Free slot styling */
+.status-free {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.1) 0%, rgba(46, 204, 113, 0.05) 100%);
+  border-color: #2ecc71;
+}
+
+.status-free .slotStatus {
+  color: #27ae60;
+}
+
+.status-free:hover {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.15) 0%, rgba(46, 204, 113, 0.1) 100%);
+  border-color: #27ae60;
+}
+
+/* Occupied slot styling */
+.status-occupied {
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.05) 100%);
+  border-color: #e74c3c;
+}
+
+.status-occupied .slotStatus {
+  color: #c0392b;
+}
+
+.status-occupied:hover {
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.15) 0%, rgba(231, 76, 60, 0.1) 100%);
+  border-color: #c0392b;
+}
+
+/* Unavailable slot styling (if used in future) */
+.status-unavailable {
+  background: linear-gradient(135deg, rgba(149, 165, 166, 0.1) 0%, rgba(149, 165, 166, 0.05) 100%);
+  border-color: #95a5a6;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.status-unavailable .slotStatus {
+  color: #7f8c8d;
+}
+
+.status-unavailable:hover {
+  transform: none;
+}
+
+.empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: #7f8c8d;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #ecf0f1;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 10px;
+  }
+
+  .slot {
+    padding: 12px 6px;
+  }
+
+  .slotNumber {
+    font-size: 12px;
+  }
+
+  .slotStatus {
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,80 @@
+.display {
+  width: 100%;
+  min-height: 420px;
+  background: linear-gradient(180deg, #0b2545 0%, #102a43 100%);
+  color: #fff;
+  border-radius: 10px;
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.6);
+}
+
+.full {
+  background: linear-gradient(180deg, #3b0f0f 0%, #2b0d0d 100%);
+}
+
+.statusRow {
+  margin-bottom: 18px;
+}
+
+.statusBadge {
+  background-color: rgba(255,255,255,0.05);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 36px;
+  letter-spacing: 1px;
+}
+
+.primaryText {
+  font-size: 140px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 12px;
+  letter-spacing: 6px;
+}
+
+.primarySub {
+  font-size: 52px;
+  font-weight: 700;
+  color: #ffd166;
+  margin-bottom: 18px;
+}
+
+.secondary {
+  font-size: 28px;
+  color: rgba(255,255,255,0.85);
+  margin-top: 8px;
+}
+
+.alternatives {
+  margin-top: 26px;
+  font-size: 20px;
+  color: rgba(255,255,255,0.85);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .primaryText { font-size: 96px; }
+  .primarySub { font-size: 40px; }
+}
+
+@media (max-width: 768px) {
+  .display {
+    padding: 24px;
+    min-height: 360px;
+  }
+  .primaryText { font-size: 56px; }
+  .primarySub { font-size: 30px; }
+  .statusBadge { font-size: 28px; padding: 8px 12px; }
+}
+
+@media (max-width: 420px) {
+  .primaryText { font-size: 42px; }
+  .primarySub { font-size: 22px; }
+}

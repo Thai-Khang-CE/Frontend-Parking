@@ -1,0 +1,1 @@
+export { useSignage } from './useSignage';
