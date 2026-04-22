@@ -115,6 +115,27 @@
   font-size: 12px;
 }
 
+.refreshBtn {
+  padding: 6px 16px;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.refreshBtn:hover {
+  background-color: #2980b9;
+}
+
+.refreshBtn:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
   .header h1 {
     font-size: 24px;

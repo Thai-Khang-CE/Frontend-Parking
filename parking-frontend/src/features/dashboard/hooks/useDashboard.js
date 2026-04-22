@@ -1,60 +1,25 @@
-import { useEffect, useState } from 'react';
-import {
-  dashboardMockData,
-  generateUpdatedDashboardData,
-} from '../../../mock/dashboardMock.js';
+import { useState, useEffect } from 'react';
+import { useParkingContext } from '../../../context/ParkingContext.jsx';
 
-export function useDashboard(pollInterval = 10000) {
-  const [data, setData] = useState(dashboardMockData);
+export function useDashboard() {
+  const ctx = useParkingContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [timeAgo, setTimeAgo] = useState('just now');
 
-  // Polling and data updates
+  // Re-derive dashboard data whenever shared state revision increments
   useEffect(() => {
-    setLoading(false);
-    setError(null);
+    void ctx.revision; // subscribe to context
+    try {
+      setError(null);
+    } catch (err) {
+      setError('Failed to update dashboard data');
+    }
+  }, [ctx.revision]);
 
-    const interval = setInterval(() => {
-      try {
-        setData(generateUpdatedDashboardData());
-      } catch (err) {
-        setError('Failed to update dashboard data');
-      }
-    }, pollInterval);
+  // Derive from shared state (reads live module data)
+  const data = ctx.getDashboardData();
 
-    return () => clearInterval(interval);
-  }, [pollInterval]);
-
-  // Calculate and update relative time display
-  useEffect(() => {
-    const updateTimeAgo = () => {
-      if (!data.updatedAt) return;
-      
-      const now = new Date();
-      const updated = new Date(data.updatedAt);
-      const diffSeconds = Math.floor((now - updated) / 1000);
-
-      if (diffSeconds < 10) {
-        setTimeAgo('just now');
-      } else if (diffSeconds < 60) {
-        setTimeAgo(`${diffSeconds}s ago`);
-      } else if (diffSeconds < 3600) {
-        const minutes = Math.floor(diffSeconds / 60);
-        setTimeAgo(`${minutes}m ago`);
-      } else {
-        const hours = Math.floor(diffSeconds / 3600);
-        setTimeAgo(`${hours}h ago`);
-      }
-    };
-
-    updateTimeAgo();
-    const timer = setInterval(updateTimeAgo, 1000);
-
-    return () => clearInterval(timer);
-  }, [data.updatedAt]);
-
-  return { data, loading, error, timeAgo };
+  return { data, loading, error, timeAgo: ctx.timeAgo };
 }
 
 export default useDashboard;

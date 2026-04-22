@@ -1,6 +1,7 @@
 /**
  * Guidance Page
  * Driver guidance interface - shows parking recommendations
+ * Updates automatically when shared parking state changes (via Monitoring refresh)
  */
 
 import { useGuidance } from '../hooks';
@@ -8,7 +9,7 @@ import { PreferredZoneCard, GuidanceMessageBox, AlternativeZonesGrid } from '../
 import styles from './GuidancePage.module.css';
 
 function GuidancePage() {
-  const { data, loading, error, requestGuidance } = useGuidance();
+  const { data, loading, error } = useGuidance();
 
   if (error) {
     return (
@@ -45,9 +46,6 @@ function GuidancePage() {
         </div>
         <div className={styles.empty}>
           <p>No guidance available</p>
-          <button className={`${styles.button} ${styles.primaryButton}`} onClick={requestGuidance}>
-            Get Guidance
-          </button>
         </div>
       </div>
     );
@@ -73,15 +71,11 @@ function GuidancePage() {
         )}
       </div>
 
-      {/* Action Buttons */}
+      {/* Info note - guidance driven from Monitoring */}
       <div className={styles.actions}>
-        <button
-          className={`${styles.button} ${styles.primaryButton}`}
-          onClick={requestGuidance}
-          disabled={loading}
-        >
-          {loading ? 'Loading...' : 'Get New Guidance'}
-        </button>
+        <p className={styles.note}>
+          Guidance updates automatically when Monitoring refreshes slots
+        </p>
       </div>
     </div>
   );

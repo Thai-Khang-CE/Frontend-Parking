@@ -14,7 +14,7 @@ import { getMonitoringZoneOptions } from '../../../mock/monitoringMock.js';
 import styles from './MonitoringPage.module.css';
 
 function MonitoringPage() {
-  const { data, loading, error, timeAgo, selectedZoneId, selectZone } = useMonitoring();
+  const { data, loading, error, timeAgo, selectedZoneId, selectZone, refreshSlots } = useMonitoring();
   const zoneOptions = getMonitoringZoneOptions();
 
   if (error) {
@@ -100,12 +100,18 @@ function MonitoringPage() {
       <div className={styles.footer}>
         <div className={styles.footerLeft}>
           <span>Last updated: <strong>{timeAgo}</strong></span>
-          <span className={styles.badge}>Auto-refresh: 5s</span>
         </div>
         <div className={styles.footerRight}>
           <span>{data.totalFreeSlots} free</span>
           <span>•</span>
           <span>{data.zone.occupiedSlots} occupied</span>
+          <button
+            className={styles.refreshBtn}
+            onClick={refreshSlots}
+            disabled={loading}
+          >
+            {loading ? 'Refreshing...' : 'Refresh Slots'}
+          </button>
         </div>
       </div>
     </div>
