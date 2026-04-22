@@ -1,0 +1,106 @@
+/**
+ * SummaryCard Styling (CSS Module)
+ * Style for individual summary metric cards
+ */
+
+.card {
+  padding: 24px;
+  background-color: #fff;
+  border: 1px solid #ecf0f1;
+  border-radius: 6px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+  opacity: 0.7;
+}
+
+.value {
+  font-size: 36px;
+  font-weight: bold;
+  margin: 12px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.unit {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin-top: 4px;
+}
+
+.label {
+  font-size: 13px;
+  color: #95a5a6;
+  font-weight: 500;
+  margin-top: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Color variants */
+.color-default .value {
+  color: #2c3e50;
+}
+
+.color-total .value {
+  color: #3498db;
+}
+
+.color-occupied .value {
+  color: #e74c3c;
+}
+
+.color-available .value {
+  color: #2ecc71;
+}
+
+.color-occupancy .value {
+  color: #f39c12;
+}
+
+.color-default:hover {
+  border-color: #bdc3c7;
+}
+
+.color-total:hover {
+  border-color: #3498db;
+  background-color: #ecf6ff;
+}
+
+.color-occupied:hover {
+  border-color: #e74c3c;
+  background-color: #ffecec;
+}
+
+.color-available:hover {
+  border-color: #2ecc71;
+  background-color: #ecffec;
+}
+
+.color-occupancy:hover {
+  border-color: #f39c12;
+  background-color: #fff9ec;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 16px;
+  }
+
+  .value {
+    font-size: 28px;
+  }
+
+  .label {
+    font-size: 12px;
+  }
+}
