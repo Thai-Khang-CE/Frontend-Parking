@@ -1,0 +1,671 @@
+/**
+ * Gate Terminal Page Styles
+ * Terminal/Kiosk appearance with large touchable elements
+ */
+
+.terminal {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-family: "Arial", sans-serif;
+}
+
+.screen {
+  width: 100%;
+  max-width: 800px;
+  height: 100vh;
+  max-height: 1000px;
+  background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+/* ──────────────────────────────────────────
+   Header
+──────────────────────────────────────────── */
+.header {
+  background: linear-gradient(90deg, #e94560 0%, #d4165a 100%);
+  color: white;
+  padding: 20px 24px;
+  border-bottom: 3px solid #b00b50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(233, 69, 96, 0.3);
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.headerIcon {
+  font-size: 28px;
+}
+
+.header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.headerMeta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  text-align: right;
+}
+
+.gateId {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.gateStatus {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  background: #4ade80;
+  border-radius: 50%;
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 0 6px rgba(74, 222, 128, 0);
+  }
+}
+
+.backBtn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  height: 44px;
+  width: 44px;
+}
+
+.backBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ──────────────────────────────────────────
+   Content Area
+──────────────────────────────────────────── */
+.content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+  overflow-y: auto;
+}
+
+/* ──────────────────────────────────────────
+   Main Menu
+──────────────────────────────────────────── */
+.menuContainer {
+  width: 100%;
+  text-align: center;
+}
+
+.menuContainer h2 {
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: 0 0 40px;
+  text-transform: uppercase;
+}
+
+.menuGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.menuButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 32px 24px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  min-height: 200px;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.menuButton:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(102, 126, 234, 0.5);
+}
+
+.menuButton:active {
+  transform: translateY(-2px);
+}
+
+.menuButton.cardMode {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.menuButton.tempEntry {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.menuButton.tempExit {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.modeIcon {
+  font-size: 48px;
+  display: block;
+}
+
+.modeName {
+  display: block;
+  font-size: 18px;
+}
+
+.modeDesc {
+  display: block;
+  font-size: 12px;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+/* ──────────────────────────────────────────
+   Input Form
+──────────────────────────────────────────── */
+.inputForm {
+  width: 100%;
+  max-width: 500px;
+}
+
+.inputForm label {
+  display: block;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.cardInput,
+.textInput {
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  font-family: monospace;
+  text-transform: uppercase;
+}
+
+.cardInput:focus,
+.textInput:focus {
+  outline: none;
+  border-color: #f093fb;
+  box-shadow: 0 0 0 3px rgba(240, 147, 251, 0.2);
+}
+
+.textInput {
+  text-transform: none;
+  font-family: Arial, sans-serif;
+}
+
+.actionBtn {
+  width: 100%;
+  padding: 18px 24px;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  margin-bottom: 12px;
+}
+
+.actionBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(102, 126, 234, 0.5);
+}
+
+.actionBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.actionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.actionBtn.loading {
+  pointer-events: none;
+}
+
+.actionBtn.secondary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* ──────────────────────────────────────────
+   Results
+──────────────────────────────────────────── */
+.result {
+  width: 100%;
+  max-width: 500px;
+  padding: 32px 24px;
+  border-radius: 8px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.result.success {
+  background: rgba(74, 222, 128, 0.1);
+  border: 2px solid rgba(74, 222, 128, 0.3);
+}
+
+.result.error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 2px solid rgba(239, 68, 68, 0.3);
+}
+
+.resultIcon {
+  font-size: 64px;
+  display: block;
+  margin-bottom: 16px;
+  animation: iconBounce 0.6s ease;
+}
+
+@keyframes iconBounce {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.result h3 {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.message {
+  color: #9ca3af;
+  font-size: 14px;
+  margin: 0 0 20px;
+}
+
+.errorMsg {
+  color: #fca5a5;
+  font-size: 16px;
+  margin: 0 0 20px;
+  font-weight: 600;
+}
+
+.successMsg {
+  color: #86efac;
+  font-size: 16px;
+  margin: 20px 0 0;
+  font-weight: 600;
+}
+
+.helpText {
+  color: #9ca3af;
+  font-size: 13px;
+  margin: 12px 0 20px;
+}
+
+/* ──────────────────────────────────────────
+   Result Info
+──────────────────────────────────────────── */
+.resultInfo {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 14px;
+}
+
+.infoRow:last-child {
+  border-bottom: none;
+}
+
+.label {
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.value {
+  color: #e5e7eb;
+  font-weight: 600;
+}
+
+.value.green {
+  color: #86efac;
+}
+
+.value.mono {
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.value.small {
+  font-size: 11px;
+}
+
+/* ──────────────────────────────────────────
+   Ticket Box
+──────────────────────────────────────────── */
+.ticketBox {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border-radius: 8px;
+  padding: 24px;
+  margin: 20px 0;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+}
+
+.ticketContent {
+  text-align: center;
+}
+
+.ticketNumber {
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  font-family: monospace;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.ticketDetail {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+/* ──────────────────────────────────────────
+   Payment Form
+──────────────────────────────────────────── */
+.paymentForm {
+  width: 100%;
+  max-width: 500px;
+}
+
+.sessionInfo h3 {
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+
+.paymentMethodSection {
+  margin: 24px 0;
+}
+
+.paymentMethodSection label {
+  display: block;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.paymentGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.paymentBtn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 12px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.paymentBtn:hover {
+  background: rgba(240, 147, 251, 0.2);
+  border-color: #f093fb;
+  transform: translateY(-2px);
+}
+
+.paymentBtn.selected {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border-color: #f093fb;
+  box-shadow: 0 8px 20px rgba(240, 147, 251, 0.3);
+}
+
+.paymentIcon {
+  font-size: 28px;
+}
+
+/* ──────────────────────────────────────────
+   Footer
+──────────────────────────────────────────── */
+.footer {
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px 24px;
+}
+
+.footerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.zoneStatusSmall {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  flex: 1;
+}
+
+.zoneItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.zoneName {
+  color: #9ca3af;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.zoneBar {
+  display: block;
+  color: #e5e7eb;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.zoneBar.available {
+  background: rgba(74, 222, 128, 0.2);
+  color: #86efac;
+}
+
+.zoneBar.busy {
+  background: rgba(245, 87, 108, 0.2);
+  color: #fca5a5;
+}
+
+.zoneBar.full {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+.time {
+  color: #9ca3af;
+  font-size: 13px;
+  font-family: monospace;
+  min-width: 80px;
+  text-align: right;
+}
+
+/* ──────────────────────────────────────────
+   Responsive
+──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .screen {
+    max-width: 100%;
+    border-radius: 0;
+    max-height: 100vh;
+  }
+
+  .header h1 {
+    font-size: 18px;
+  }
+
+  .headerMeta {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .gateId {
+    display: none;
+  }
+
+  .menuGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .content {
+    padding: 24px 16px;
+  }
+
+  .menuButton {
+    min-height: 120px;
+    padding: 20px 16px;
+  }
+
+  .cardInput,
+  .textInput {
+    font-size: 16px;
+    padding: 14px;
+  }
+
+  .actionBtn {
+    font-size: 14px;
+    padding: 16px 20px;
+  }
+
+  .resultIcon {
+    font-size: 48px;
+  }
+
+  .result h3 {
+    font-size: 20px;
+  }
+
+  .paymentGrid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+
+  .zoneStatusSmall {
+    gap: 8px;
+  }
+}
+
+@media (max-height: 800px) {
+  .content {
+    padding: 24px 16px;
+  }
+
+  .resultIcon {
+    font-size: 48px;
+  }
+
+  .menuButton {
+    min-height: 140px;
+    padding: 20px 16px;
+  }
+}

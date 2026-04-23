@@ -1,0 +1,149 @@
+/**
+ * Payment History Card Styles
+ */
+
+.container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  margin-top: 24px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+.emptyIcon {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.emptyText {
+  font-size: 12px;
+  color: #aaa;
+  margin: 8px 0 0 0;
+}
+
+.transactionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transactionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #27ae60;
+  transition: all 0.2s;
+}
+
+.transactionItem:hover {
+  background-color: #f0f1f3;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #e8f5e9;
+  color: #27ae60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.txnInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.txnDate {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.txnMethod {
+  font-size: 12px;
+  color: #666;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.amount {
+  font-size: 14px;
+  font-weight: 700;
+  color: #27ae60;
+}
+
+.txnId {
+  font-size: 11px;
+  color: #999;
+  font-family: "Courier New", monospace;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .transactionItem {
+    padding: 12px 14px;
+  }
+
+  .icon {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .txnDate {
+    font-size: 12px;
+  }
+
+  .txnMethod {
+    font-size: 11px;
+  }
+
+  .amount {
+    font-size: 13px;
+  }
+
+  .txnId {
+    font-size: 10px;
+  }
+}

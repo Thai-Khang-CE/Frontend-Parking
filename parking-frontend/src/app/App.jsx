@@ -4,10 +4,15 @@
  * Includes role-based route access control
  */
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from '../context/AuthContext';
-import { MainLayout } from '../components/layout';
-import { routes } from './routes';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider, useAuth } from "../context/AuthContext";
+import { MainLayout } from "../components/layout";
+import { routes } from "./routes";
 
 /**
  * Protected route wrapper
@@ -18,7 +23,9 @@ function ProtectedRoute({ element, requiresAuth, allowedRoles }) {
   const { isAuthenticated, loading, user } = useAuth();
 
   if (loading) {
-    return <div style={{ padding: '40px', textAlign: 'center' }}>Loading...</div>;
+    return (
+      <div style={{ padding: "40px", textAlign: "center" }}>Loading...</div>
+    );
   }
 
   if (requiresAuth && !isAuthenticated) {
@@ -53,11 +60,9 @@ function AppContent() {
           />
         );
 
-        // Login page renders outside MainLayout
-        if (route.path === '/login') {
-          return (
-            <Route key={route.path} path={route.path} element={element} />
-          );
+        // Login and Terminal pages render outside MainLayout
+        if (route.path === "/login" || route.path === "/terminal") {
+          return <Route key={route.path} path={route.path} element={element} />;
         }
 
         // All other pages render inside MainLayout
