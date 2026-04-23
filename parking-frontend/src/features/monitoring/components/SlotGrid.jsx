@@ -5,7 +5,7 @@
 
 import styles from './SlotGrid.module.css';
 
-function SlotGrid({ slots }) {
+function SlotGrid({ slots, canEdit = false, onChangeStatus }) {
   if (!slots || slots.length === 0) {
     return <div className={styles.empty}>No slots available</div>;
   }
@@ -17,6 +17,20 @@ function SlotGrid({ slots }) {
     return `${Math.floor(durationSeconds / 3600)}h`;
   };
 
+  const getStatusIcon = (status) => {
+    if (status === 'FREE') return 'OK';
+    if (status === 'OCCUPIED') return 'X';
+    if (status === 'UNAVAILABLE') return '-';
+    return '?';
+  };
+
+  const getStatusLabel = (status) => {
+    if (status === 'FREE') return 'Free';
+    if (status === 'OCCUPIED') return 'Occupied';
+    if (status === 'UNAVAILABLE') return 'Unavailable';
+    return status;
+  };
+
   return (
     <div className={styles.grid}>
       {slots.map((slot) => (
@@ -26,12 +40,24 @@ function SlotGrid({ slots }) {
           title={`Slot ${slot.number} - ${slot.status}`}
         >
           <div className={styles.slotNumber}>{slot.number}</div>
-          <div className={styles.slotStatus}>
-            {slot.status === 'FREE' && '✓'}
-            {slot.status === 'OCCUPIED' && '✕'}
-          </div>
+          <div className={styles.slotStatus}>{getStatusIcon(slot.status)}</div>
+          <div className={styles.statusLabel}>{getStatusLabel(slot.status)}</div>
           {slot.occupancyDuration && slot.status === 'OCCUPIED' && (
-            <div className={styles.duration}>{getOccupancyDurationText(slot.occupancyDuration)}</div>
+            <div className={styles.duration}>
+              {getOccupancyDurationText(slot.occupancyDuration)}
+            </div>
+          )}
+          {canEdit && (
+            <select
+              className={styles.statusSelect}
+              value={slot.status}
+              onChange={(event) => onChangeStatus?.(slot.id, event.target.value)}
+              aria-label={`Change status for ${slot.number}`}
+            >
+              <option value="FREE">Free</option>
+              <option value="OCCUPIED">Occupied</option>
+              <option value="UNAVAILABLE">Unavailable</option>
+            </select>
           )}
         </div>
       ))}

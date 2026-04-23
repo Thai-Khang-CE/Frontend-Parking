@@ -65,40 +65,75 @@ const SLOT_PATTERN = {
   'zone-c': { step: 7, offset: 5 },
 };
 
-const INITIAL_STATE = {
-  zones: {
-    'zone-a': { occupiedSlots: 25 },
-    'zone-b': { occupiedSlots: 15 },
-    'zone-c': { occupiedSlots: 22 },
-  },
-  updatedAt: new Date().toISOString(),
+const INITIAL_OCCUPIED_COUNTS = {
+  'zone-a': 25,
+  'zone-b': 15,
+  'zone-c': 22,
 };
 
-let _parkingState = JSON.parse(JSON.stringify(INITIAL_STATE));
+const SLOT_STATUSES = new Set(['FREE', 'OCCUPIED', 'UNAVAILABLE']);
+const INITIAL_UPDATED_AT = new Date().toISOString();
 
 const clone = (obj) => JSON.parse(JSON.stringify(obj));
 
 const getOrderedZoneIds = () => Object.keys(ZONE_CONFIG);
 
-export const getParkingState = () => _parkingState;
+const getOrderedIndexesForZone = (zoneId, totalSlots) => {
+  const pattern = SLOT_PATTERN[zoneId];
+
+  return Array.from(
+    { length: totalSlots },
+    (_, index) => (pattern.offset + index * pattern.step) % totalSlots
+  );
+};
+
+const createInitialZoneSlots = (zoneId, updatedAt = INITIAL_UPDATED_AT) => {
+  const config = ZONE_CONFIG[zoneId];
+  const occupiedCount = INITIAL_OCCUPIED_COUNTS[zoneId] || 0;
+  const orderedIndexes = getOrderedIndexesForZone(zoneId, config.totalSlots);
+  const occupiedIndexes = new Set(orderedIndexes.slice(0, occupiedCount));
+
+  return Array.from({ length: config.totalSlots }, (_, index) => ({
+    id: `${zoneId}-slot-${index + 1}`,
+    status: occupiedIndexes.has(index) ? 'OCCUPIED' : 'FREE',
+    occupiedSince: occupiedIndexes.has(index) ? updatedAt : null,
+  }));
+};
+
+const INITIAL_STATE = {
+  zones: {
+    'zone-a': { slots: createInitialZoneSlots('zone-a') },
+    'zone-b': { slots: createInitialZoneSlots('zone-b') },
+    'zone-c': { slots: createInitialZoneSlots('zone-c') },
+  },
+  updatedAt: INITIAL_UPDATED_AT,
+};
+
+let _parkingState = clone(INITIAL_STATE);
+
+export const getParkingState = () => clone(_parkingState);
+
+const getZoneSlotStates = (zoneId) => _parkingState.zones[zoneId]?.slots || [];
 
 const getZoneMetrics = (zoneId) => {
   const config = ZONE_CONFIG[zoneId];
-  const zoneState = _parkingState.zones[zoneId];
+  const zoneSlots = getZoneSlotStates(zoneId);
 
-  if (!config || !zoneState) {
+  if (!config || zoneSlots.length === 0) {
     return null;
   }
 
-  const occupiedSlots = zoneState.occupiedSlots;
   const totalSlots = config.totalSlots;
-  const availableSlots = totalSlots - occupiedSlots;
+  const occupiedSlots = zoneSlots.filter((slot) => slot.status === 'OCCUPIED').length;
+  const unavailableSlots = zoneSlots.filter((slot) => slot.status === 'UNAVAILABLE').length;
+  const availableSlots = zoneSlots.filter((slot) => slot.status === 'FREE').length;
   const occupancyPercentage = Number(
     ((occupiedSlots / totalSlots) * 100).toFixed(2)
   );
 
   return {
     occupiedSlots,
+    unavailableSlots,
     totalSlots,
     availableSlots,
     occupancyPercentage,
@@ -106,43 +141,35 @@ const getZoneMetrics = (zoneId) => {
   };
 };
 
-const buildOccupiedSlotIndexSet = (zoneId, occupiedSlots, totalSlots) => {
-  const pattern = SLOT_PATTERN[zoneId];
-  const orderedIndexes = Array.from(
-    { length: totalSlots },
-    (_, index) => (pattern.offset + index * pattern.step) % totalSlots
-  );
-
-  return new Set(orderedIndexes.slice(0, occupiedSlots));
-};
-
 const buildZoneRows = (zoneId) => {
   const config = ZONE_CONFIG[zoneId];
   const metrics = getZoneMetrics(zoneId);
+  const zoneSlots = getZoneSlotStates(zoneId);
 
-  if (!config || !metrics) {
+  if (!config || !metrics || zoneSlots.length === 0) {
     return [];
   }
-
-  const occupiedIndexes = buildOccupiedSlotIndexSet(
-    zoneId,
-    metrics.occupiedSlots,
-    metrics.totalSlots
-  );
 
   let globalSlotIndex = 0;
 
   return config.rows.map((row, rowIndex) => {
     const slots = Array.from({ length: row.slotCount }, (_, slotIndex) => {
+      const slotState = zoneSlots[globalSlotIndex];
       const slotNumber = `${config.code}${String(globalSlotIndex + 1).padStart(2, '0')}`;
-      const status = occupiedIndexes.has(globalSlotIndex) ? 'OCCUPIED' : 'FREE';
+      const occupancyDuration =
+        slotState.status === 'OCCUPIED' && slotState.occupiedSince
+          ? Math.floor(
+              (new Date() - new Date(slotState.occupiedSince)) / 1000
+            )
+          : null;
 
       const slot = {
-        id: `${zoneId}-slot-${globalSlotIndex + 1}`,
+        id: slotState.id,
         number: slotNumber,
-        status,
-        occupiedSince: status === 'OCCUPIED' ? _parkingState.updatedAt : null,
-        occupancyDuration: null,
+        status: slotState.status,
+        occupiedSince:
+          slotState.status === 'OCCUPIED' ? slotState.occupiedSince : null,
+        occupancyDuration,
         rowId: row.id,
         rowLabel: row.label,
         rowIndex,
@@ -159,6 +186,7 @@ const buildZoneRows = (zoneId) => {
       slots,
       occupiedSlots: slots.filter((slot) => slot.status === 'OCCUPIED').length,
       freeSlots: slots.filter((slot) => slot.status === 'FREE').length,
+      unavailableSlots: slots.filter((slot) => slot.status === 'UNAVAILABLE').length,
     };
   });
 };
@@ -192,7 +220,7 @@ export const getDashboardSummary = () => {
   const zones = getAllZones();
   const totalSlots = zones.reduce((sum, zone) => sum + zone.totalSlots, 0);
   const occupiedSlots = zones.reduce((sum, zone) => sum + zone.occupiedSlots, 0);
-  const availableSlots = totalSlots - occupiedSlots;
+  const availableSlots = zones.reduce((sum, zone) => sum + zone.availableSlots, 0);
   const occupancyPercentage = Number(
     ((occupiedSlots / totalSlots) * 100).toFixed(2)
   );
@@ -203,13 +231,22 @@ export const getDashboardSummary = () => {
 const simulateSlotChange = () => {
   const zoneIds = getOrderedZoneIds();
   const randomZoneId = zoneIds[Math.floor(Math.random() * zoneIds.length)];
-  const config = ZONE_CONFIG[randomZoneId];
-  const currentOccupied = _parkingState.zones[randomZoneId].occupiedSlots;
+  const zoneSlots = getZoneSlotStates(randomZoneId);
+  const freeSlots = zoneSlots.filter((slot) => slot.status === 'FREE');
+  const occupiedSlots = zoneSlots.filter((slot) => slot.status === 'OCCUPIED');
+  const timestamp = new Date().toISOString();
 
-  if (currentOccupied < config.totalSlots && Math.random() < 0.6) {
-    _parkingState.zones[randomZoneId].occupiedSlots += 1;
-  } else if (currentOccupied > 0) {
-    _parkingState.zones[randomZoneId].occupiedSlots -= 1;
+  if (freeSlots.length > 0 && (occupiedSlots.length === 0 || Math.random() < 0.6)) {
+    const targetSlot = freeSlots[Math.floor(Math.random() * freeSlots.length)];
+    targetSlot.status = 'OCCUPIED';
+    targetSlot.occupiedSince = timestamp;
+    return;
+  }
+
+  if (occupiedSlots.length > 0) {
+    const targetSlot = occupiedSlots[Math.floor(Math.random() * occupiedSlots.length)];
+    targetSlot.status = 'FREE';
+    targetSlot.occupiedSince = null;
   }
 };
 
@@ -217,6 +254,32 @@ export const advanceParkingState = () => {
   simulateSlotChange();
   _parkingState.updatedAt = new Date().toISOString();
   return clone(_parkingState);
+};
+
+export const setSlotStatus = (zoneId, slotId, nextStatus) => {
+  const zoneSlots = getZoneSlotStates(zoneId);
+  const normalizedStatus = String(nextStatus || '').toUpperCase();
+
+  if (!zoneSlots.length || !SLOT_STATUSES.has(normalizedStatus)) {
+    return null;
+  }
+
+  const targetSlot = zoneSlots.find((slot) => slot.id === slotId);
+  if (!targetSlot) {
+    return null;
+  }
+
+  if (targetSlot.status === normalizedStatus) {
+    return getMonitoringData(zoneId);
+  }
+
+  const timestamp = new Date().toISOString();
+
+  targetSlot.status = normalizedStatus;
+  targetSlot.occupiedSince = normalizedStatus === 'OCCUPIED' ? timestamp : null;
+  _parkingState.updatedAt = timestamp;
+
+  return getMonitoringData(zoneId);
 };
 
 export const getDashboardData = () => ({

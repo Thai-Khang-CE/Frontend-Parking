@@ -47,7 +47,13 @@ function ProtectedRoute({ element, requiresAuth, allowedRoles }) {
  * App content - inside AuthProvider
  */
 function AppContent() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div style={{ padding: "40px", textAlign: "center" }}>Loading...</div>
+    );
+  }
 
   return (
     <Routes>

@@ -1,20 +1,43 @@
 /**
  * useMyParking Hook
- * Manages My Parking page state and real-time session updates
+ * Manages My Parking page state and keeps it aligned with shared parking availability.
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../../../context/AuthContext.jsx';
+import { useParkingContext } from '../../../context/ParkingContext.jsx';
 import {
   getMyParkingData,
+  exitMyParkingSession,
+  extendMyParkingSession,
+  getParkingSlotStateId,
   calculateElapsedTime,
-  calculateEstimatedFee,
-  calculateDurationHours
+  calculateSessionEstimatedFee,
+  PARKING_HOURLY_RATE,
+  EXTEND_INCREMENT_HOURS
 } from '../../../mock/myParkingMock.js';
 
-function getInitialParkingState() {
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const hydrateParkingData = (parkingData) => {
+  if (!parkingData?.currentSession) {
+    return parkingData;
+  }
+
+  return {
+    ...parkingData,
+    currentSession: {
+      ...parkingData.currentSession,
+      elapsedTime: calculateElapsedTime(parkingData.currentSession.entryTime),
+      estimatedFee: calculateSessionEstimatedFee(parkingData.currentSession)
+    }
+  };
+};
+
+function getInitialParkingState(userId) {
   try {
     return {
-      data: getMyParkingData(),
+      data: hydrateParkingData(getMyParkingData(userId)),
       error: null
     };
   } catch {
@@ -26,99 +49,129 @@ function getInitialParkingState() {
 }
 
 export function useMyParking() {
-  const [parkingState, setParkingState] = useState(getInitialParkingState);
+  const { user } = useAuth();
+  const parkingContext = useParkingContext();
+  const userId = user?.email || 'user-001';
+  const [parkingState, setParkingState] = useState(() => getInitialParkingState(userId));
   const [exitResult, setExitResult] = useState(null);
+  const [extendResult, setExtendResult] = useState(null);
+  const [isExtending, setIsExtending] = useState(false);
   const { data, error } = parkingState;
   const loading = false;
 
+  const syncParkingState = useCallback(() => {
+    try {
+      setParkingState({
+        data: hydrateParkingData(getMyParkingData(userId)),
+        error: null
+      });
+    } catch {
+      setParkingState({
+        data: null,
+        error: 'Failed to load parking data'
+      });
+    }
+  }, [userId]);
+
   useEffect(() => {
-    if (!data?.currentSession?.id) return;
+    syncParkingState();
+    setExitResult(null);
+    setExtendResult(null);
+    setIsExtending(false);
+  }, [syncParkingState]);
+
+  useEffect(() => {
+    if (!data?.currentSession?.id) {
+      return undefined;
+    }
 
     const timer = setInterval(() => {
-      setParkingState((prevState) => {
-        if (!prevState.data?.currentSession) {
-          return prevState;
-        }
-
-        const elapsedTime = calculateElapsedTime(prevState.data.currentSession.entryTime);
-        const estimatedFee = calculateEstimatedFee(prevState.data.currentSession.entryTime);
-
-        return {
-          ...prevState,
-          data: {
-            ...prevState.data,
-            currentSession: {
-              ...prevState.data.currentSession,
-              elapsedTime,
-              estimatedFee
-            },
-            lastUpdated: new Date()
-          }
-        };
-      });
+      syncParkingState();
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [data?.currentSession?.id]);
+  }, [data?.currentSession?.id, syncParkingState]);
 
   const stats = data ? {
     totalSessions: data.history.length,
     totalPaid: data.totalPaid,
     totalUnpaid: data.totalUnpaid,
+    currentEstimatedFee: data.currentSession?.estimatedFee || 0,
+    totalAmountDue: data.totalUnpaid + (data.currentSession?.estimatedFee || 0),
     hasActiveSessions: !!data.currentSession
   } : null;
 
   const exitParking = useCallback(() => {
-    let completedSession = null;
+    setExtendResult(null);
 
-    setParkingState((prevState) => {
-      if (!prevState.data?.currentSession) {
-        return prevState;
-      }
+    const completedSession = exitMyParkingSession(userId);
 
-      const exitTime = new Date();
-      const activeSession = prevState.data.currentSession;
-      const duration = calculateDurationHours(activeSession.entryTime, exitTime);
-      const durationLabel = calculateElapsedTime(activeSession.entryTime, exitTime);
-      const fee = calculateEstimatedFee(activeSession.entryTime, 10000, exitTime);
+    if (!completedSession) {
+      return false;
+    }
 
-      completedSession = {
-        ...activeSession,
-        status: 'completed',
-        exitTime,
-        duration,
-        durationLabel,
-        fee,
-        estimatedFee: fee,
-        paid: false
-      };
+    const sharedSlotId = getParkingSlotStateId(completedSession.zone, completedSession.slot);
+    if (sharedSlotId) {
+      parkingContext.updateSlotStatus(completedSession.zone, sharedSlotId, 'FREE');
+    }
 
-      return {
-        ...prevState,
-        data: {
-          ...prevState.data,
-          currentSession: null,
-          history: [completedSession, ...prevState.data.history],
-          totalUnpaid: prevState.data.totalUnpaid + fee,
-          lastUpdated: exitTime
-        }
-      };
+    syncParkingState();
+
+    setExitResult({
+      sessionId: completedSession.id,
+      zoneName: completedSession.zoneName,
+      slot: completedSession.slot,
+      fee: completedSession.fee,
+      exitTime: completedSession.exitTime,
+      canGoToPayment: completedSession.fee > 0
     });
 
-    if (completedSession) {
-      setExitResult({
-        sessionId: completedSession.id,
-        zoneName: completedSession.zoneName,
-        slot: completedSession.slot,
-        fee: completedSession.fee,
-        exitTime: completedSession.exitTime,
-        canGoToPayment: completedSession.fee > 0
-      });
+    return true;
+  }, [parkingContext, syncParkingState, userId]);
+
+  const extendParkingTime = useCallback(async () => {
+    if (!data?.currentSession || isExtending) {
+      return false;
     }
-  }, []);
+
+    setIsExtending(true);
+    setExitResult(null);
+    setExtendResult(null);
+
+    try {
+      await wait(700);
+
+      const updatedSession = extendMyParkingSession(userId, EXTEND_INCREMENT_HOURS);
+
+      if (!updatedSession) {
+        return false;
+      }
+
+      syncParkingState();
+
+      setExtendResult({
+        sessionId: updatedSession.id,
+        zoneName: updatedSession.zoneName,
+        slot: updatedSession.slot,
+        addedHours: EXTEND_INCREMENT_HOURS,
+        extensionHours: updatedSession.extensionHours,
+        addedFee: PARKING_HOURLY_RATE * EXTEND_INCREMENT_HOURS,
+        estimatedFee: calculateSessionEstimatedFee(updatedSession),
+        extendedUntil: updatedSession.extendedUntil
+      });
+
+      return true;
+    } finally {
+      setIsExtending(false);
+    }
+  }, [data?.currentSession, isExtending, syncParkingState, userId]);
 
   const dismissExitResult = useCallback(() => {
     setExitResult(null);
+  }, []);
+
+  const dismissExtendResult = useCallback(() => {
+    setExtendResult(null);
   }, []);
 
   return {
@@ -127,8 +180,12 @@ export function useMyParking() {
     error,
     stats,
     exitResult,
+    extendResult,
+    isExtending,
     exitParking,
-    dismissExitResult
+    extendParkingTime,
+    dismissExitResult,
+    dismissExtendResult
   };
 }
 

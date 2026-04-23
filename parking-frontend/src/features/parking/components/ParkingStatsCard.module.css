@@ -121,6 +121,11 @@
   background-color: #e67e22;
 }
 
+.payButton:disabled {
+  background-color: #d0d7de;
+  cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
   .statsGrid {
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

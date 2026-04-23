@@ -2,12 +2,13 @@
  * ParkingContext - Shared Parking State via React Context
  * Singleton source of truth accessible across all feature hooks and pages.
  * Provides one shared parking state that all pages subscribe to.
- * Monitoring is the only page that can advance/refresh the state.
+ * Monitoring is the operator page that can refresh or edit slot state.
  */
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import {
   advanceParkingState as advanceState,
+  setSlotStatus as setSharedSlotStatus,
   getZone,
   getAllZones,
   getDashboardSummary,
@@ -30,8 +31,6 @@ export function ParkingProvider({ children }) {
   const [timeAgo, setTimeAgo] = useState('just now');
   const lastUpdatedRef = useRef(new Date());
 
-  // Subscribe to global parking state changes
-  // The useEffect polls the parkingState module-level variable
   useEffect(() => {
     let lastAt = lastUpdatedRef.current.toISOString();
 
@@ -42,40 +41,48 @@ export function ParkingProvider({ children }) {
         lastUpdatedRef.current = new Date();
         setRevision((r) => r + 1);
       }
-    }, 300); // check every 300ms
+    }, 300);
 
     return () => clearInterval(interval);
   }, []);
 
-  // Update timeAgo display
   useEffect(() => {
     const timer = setInterval(() => {
       const seconds = Math.floor(
-        (new Date() - lastUpdatedRef.current
-      ) / 1000);
+        (new Date() - lastUpdatedRef.current) / 1000
+      );
       if (seconds < 5) setTimeAgo('just now');
       else if (seconds < 60) setTimeAgo(`${seconds}s ago`);
       else setTimeAgo(`${Math.floor(seconds / 60)}m ago`);
     }, 1000);
+
     return () => clearInterval(timer);
   }, [revision]);
 
-  // Advance the shared parking state
-  // Called ONLY by Monitoring when user clicks refresh
-  const refreshSlots = useCallback(() => {
-    advanceState();
+  const markSharedStateUpdated = useCallback(() => {
     lastUpdatedRef.current = new Date();
     window.__parkingStateUpdatedAt = lastUpdatedRef.current.toISOString();
     setRevision((r) => r + 1);
   }, []);
 
+  const refreshSlots = useCallback(() => {
+    advanceState();
+    markSharedStateUpdated();
+  }, [markSharedStateUpdated]);
+
+  const updateSlotStatus = useCallback((zoneId, slotId, status) => {
+    const result = setSharedSlotStatus(zoneId, slotId, status);
+    markSharedStateUpdated();
+    return result;
+  }, [markSharedStateUpdated]);
+
   const value = {
-    revision,     // increments on every state change — use as useEffect dep
-    timeAgo,     // relative time string
-    refreshSlots, // ONLY way to advance the state
-    // Derive helpers (all read from current module state)
+    revision,
+    timeAgo,
+    refreshSlots,
+    updateSlotStatus,
     getZone: (id) => {
-      void revision; // subscribe to context
+      void revision;
       return getZone(id);
     },
     getAllZones: () => {

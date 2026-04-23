@@ -4,23 +4,86 @@
  * Available to: student, staff
  */
 
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMyParking } from '../hooks';
 import { ActiveSessionCard, SessionHistoryTable, ParkingStatsCard } from '../components';
-import { formatCurrency, formatTime } from '../../../mock/myParkingMock.js';
+import {
+  formatCurrency,
+  formatTime,
+  PARKING_HOURLY_RATE,
+  EXTEND_INCREMENT_HOURS
+} from '../../../mock/myParkingMock.js';
 import styles from './MyParkingPage.module.css';
+
+function getExtendPreview(session) {
+  if (!session) {
+    return null;
+  }
+
+  const extensionBaseTime = session.extendedUntil
+    ? new Date(session.extendedUntil)
+    : new Date();
+  const extendedUntil = new Date(
+    extensionBaseTime.getTime() + EXTEND_INCREMENT_HOURS * 60 * 60 * 1000
+  );
+  const addedFee = PARKING_HOURLY_RATE * EXTEND_INCREMENT_HOURS;
+
+  return {
+    addedHours: EXTEND_INCREMENT_HOURS,
+    addedFee,
+    estimatedFee: (session.estimatedFee || 0) + addedFee,
+    extendedUntil,
+  };
+}
 
 function MyParkingPage() {
   const navigate = useNavigate();
+  const [isAwaitingExtendConfirmation, setIsAwaitingExtendConfirmation] = useState(false);
   const {
     data,
     loading,
     error,
     stats,
     exitResult,
+    extendResult,
+    isExtending,
     exitParking,
-    dismissExitResult
+    extendParkingTime,
+    dismissExitResult,
+    dismissExtendResult
   } = useMyParking();
+
+  const extendPreview = useMemo(
+    () => getExtendPreview(data?.currentSession),
+    [data?.currentSession]
+  );
+
+  const handleRequestExtend = () => {
+    if (!data?.currentSession || isExtending) {
+      return;
+    }
+
+    dismissExtendResult();
+    setIsAwaitingExtendConfirmation(true);
+  };
+
+  const handleCancelExtend = () => {
+    setIsAwaitingExtendConfirmation(false);
+  };
+
+  const handleConfirmExtend = async () => {
+    const wasExtended = await extendParkingTime();
+
+    if (wasExtended) {
+      setIsAwaitingExtendConfirmation(false);
+    }
+  };
+
+  const handleExitParking = () => {
+    setIsAwaitingExtendConfirmation(false);
+    exitParking();
+  };
 
   if (error) {
     return (
@@ -111,7 +174,86 @@ function MyParkingPage() {
         </section>
       )}
 
-      <ParkingStatsCard stats={stats} />
+      {extendResult && (
+        <section className={styles.successBanner}>
+          <div className={styles.successContent}>
+            <span className={styles.successIcon}>OK</span>
+            <div className={styles.successText}>
+              <h2>Parking session extended</h2>
+              <p>
+                Slot {extendResult.slot} in {extendResult.zoneName} was extended by{' '}
+                {extendResult.addedHours} hour. The session is now reserved until{' '}
+                {formatTime(extendResult.extendedUntil)} and the estimated fee is{' '}
+                {formatCurrency(extendResult.estimatedFee)}.
+              </p>
+            </div>
+          </div>
+          <div className={styles.successActions}>
+            <button
+              type="button"
+              className={`${styles.dismissButton} app-button app-button--secondary`}
+              onClick={dismissExtendResult}
+            >
+              Dismiss
+            </button>
+          </div>
+        </section>
+      )}
+
+      {isAwaitingExtendConfirmation && data.currentSession && extendPreview && (
+        <section className={styles.confirmBanner}>
+          <div className={styles.confirmContent}>
+            <span className={styles.confirmIcon}>?</span>
+            <div className={styles.confirmText}>
+              <h2>Confirm time extension</h2>
+              <p>
+                Extend parking for slot {data.currentSession.slot} in {data.currentSession.zoneName}
+                {' '}by {extendPreview.addedHours} hour. This adds approximately{' '}
+                {formatCurrency(extendPreview.addedFee)} and updates the current
+                total due to {formatCurrency((stats?.totalUnpaid || 0) + extendPreview.estimatedFee)}.
+              </p>
+            </div>
+          </div>
+          <div className={styles.confirmMeta}>
+            <span className={styles.confirmPill}>
+              New reserved time: {formatTime(extendPreview.extendedUntil)}
+            </span>
+            <span className={styles.confirmPill}>
+              New current estimate: {formatCurrency(extendPreview.estimatedFee)}
+            </span>
+          </div>
+          <div className={styles.successActions}>
+            <button
+              type="button"
+              className={`${styles.paymentButton} app-button app-button--primary`}
+              onClick={handleConfirmExtend}
+              disabled={isExtending}
+            >
+              {isExtending ? 'Applying...' : 'Confirm Extension'}
+            </button>
+            <button
+              type="button"
+              className={`${styles.dismissButton} app-button app-button--secondary`}
+              onClick={handleCancelExtend}
+              disabled={isExtending}
+            >
+              Cancel
+            </button>
+          </div>
+        </section>
+      )}
+
+      <ParkingStatsCard
+        stats={stats}
+        onPayNow={() =>
+          navigate('/payment', {
+            state: {
+              source: 'my-parking',
+              reason: 'outstanding-fees'
+            }
+          })
+        }
+      />
 
       {data.currentSession ? (
         <ActiveSessionCard
@@ -119,7 +261,10 @@ function MyParkingPage() {
             ...data.currentSession,
             elapsedTime: data.currentSession.elapsedTime || 'calculating...'
           }}
-          onExit={exitParking}
+          onExit={handleExitParking}
+          onExtend={handleRequestExtend}
+          isExtending={isExtending}
+          isAwaitingConfirmation={isAwaitingExtendConfirmation}
         />
       ) : (
         <div className={`${styles.noActiveSession} app-state app-state--empty`}>

@@ -6,7 +6,13 @@
 import { formatCurrency, formatTime } from '../../../mock/myParkingMock';
 import styles from './ActiveSessionCard.module.css';
 
-function ActiveSessionCard({ session, onExit }) {
+function ActiveSessionCard({
+  session,
+  onExit,
+  onExtend,
+  isExtending = false,
+  isAwaitingConfirmation = false
+}) {
   if (!session) return null;
 
   return (
@@ -66,6 +72,20 @@ function ActiveSessionCard({ session, onExit }) {
               <span className={styles.label}>Estimated Fee:</span>
               <span className={styles.value}>{formatCurrency(session.estimatedFee, session.currency)}</span>
             </div>
+            {session.extensionHours > 0 && (
+              <>
+                <div className={styles.timingRow}>
+                  <span className={styles.label}>Extended By:</span>
+                  <span className={styles.value}>
+                    {session.extensionHours} hour{session.extensionHours > 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div className={styles.timingRow}>
+                  <span className={styles.label}>Extended Until:</span>
+                  <span className={styles.value}>{formatTime(session.extendedUntil)}</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -73,8 +93,17 @@ function ActiveSessionCard({ session, onExit }) {
           <button type="button" className={styles.exitButton} onClick={onExit}>
             Exit Parking
           </button>
-          <button type="button" className={styles.extendButton}>
-            Extend Time
+          <button
+            type="button"
+            className={styles.extendButton}
+            onClick={onExtend}
+            disabled={isExtending || isAwaitingConfirmation}
+          >
+            {isExtending
+              ? 'Extending...'
+              : isAwaitingConfirmation
+                ? 'Awaiting Confirmation...'
+                : 'Extend Time'}
           </button>
         </div>
       </div>

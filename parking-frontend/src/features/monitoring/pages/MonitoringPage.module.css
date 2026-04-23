@@ -34,11 +34,50 @@
   margin-bottom: 30px;
 }
 
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
 .sectionTitle {
-  margin: 0 0 16px 0;
+  margin: 0;
   font-size: 16px;
   font-weight: 600;
   color: #2c3e50;
+}
+
+.sectionHint {
+  margin: 0 0 16px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6b7c8f;
+}
+
+.editBadge,
+.readOnlyBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.editBadge {
+  color: #166534;
+  background: #ecfdf3;
+  border: 1px solid #bbf7d0;
+}
+
+.readOnlyBadge {
+  color: #526271;
+  background: #f3f4f6;
+  border: 1px solid #d8dee6;
 }
 
 .loading {
@@ -139,6 +178,10 @@
 @media (max-width: 768px) {
   .header h1 {
     font-size: 24px;
+  }
+
+  .sectionHeader {
+    align-items: flex-start;
   }
 
   .footer {

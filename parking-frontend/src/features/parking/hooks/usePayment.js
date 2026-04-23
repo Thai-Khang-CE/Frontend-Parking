@@ -4,42 +4,66 @@
  */
 
 import { useState, useCallback, useEffect } from "react";
-import { getPaymentData, processPayment } from "../../../mock/paymentMock";
+import { useAuth } from "../../../context/AuthContext.jsx";
+import {
+  getPaymentData,
+  processPayment,
+  PAYMENT_METHODS,
+} from "../../../mock/paymentMock";
 
 export function usePayment() {
+  const { user } = useAuth();
+  const userId = user?.email || "user-001";
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Payment processing state
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentResult, setPaymentResult] = useState(null);
   const [selectedSessions, setSelectedSessions] = useState([]);
 
-  // Initialize data on mount
+  const getPaymentMethodLabel = useCallback(
+    (paymentMethodId) =>
+      PAYMENT_METHODS.find((method) => method.id === paymentMethodId)?.label ||
+      paymentMethodId,
+    [],
+  );
+
+  const syncPaymentData = useCallback(() => {
+    const nextData = getPaymentData(userId);
+    setData(nextData);
+    setSelectedSessions((prev) => {
+      if (!prev.length) {
+        return nextData.unpaidSessions.map((session) => session.id);
+      }
+
+      const validSessionIds = new Set(nextData.unpaidSessions.map((session) => session.id));
+      return prev.filter((sessionId) => validSessionIds.has(sessionId));
+    });
+  }, [userId]);
+
   useEffect(() => {
     try {
-      const initialData = getPaymentData();
+      setLoading(true);
+      setError(null);
+      const initialData = getPaymentData(userId);
       setData(initialData);
-      // Select all unpaid sessions by default
-      setSelectedSessions(initialData.unpaidSessions.map((s) => s.id));
-      setLoading(false);
+      setSelectedSessions(initialData.unpaidSessions.map((session) => session.id));
     } catch (err) {
       setError("Failed to load payment data");
+    } finally {
       setLoading(false);
     }
-  }, []);
+  }, [userId]);
 
-  // Calculate amount to pay based on selected sessions
   const calculateAmount = useCallback(() => {
     if (!data || !selectedSessions.length) return 0;
     return data.unpaidSessions
-      .filter((s) => selectedSessions.includes(s.id))
-      .reduce((sum, s) => sum + s.fee, 0);
+      .filter((session) => selectedSessions.includes(session.id))
+      .reduce((sum, session) => sum + session.fee, 0);
   }, [data, selectedSessions]);
 
-  // Toggle session selection
   const toggleSessionSelection = useCallback((sessionId) => {
     setSelectedSessions((prev) =>
       prev.includes(sessionId)
@@ -48,19 +72,16 @@ export function usePayment() {
     );
   }, []);
 
-  // Select all unpaid sessions
   const selectAllSessions = useCallback(() => {
     if (data?.unpaidSessions) {
-      setSelectedSessions(data.unpaidSessions.map((s) => s.id));
+      setSelectedSessions(data.unpaidSessions.map((session) => session.id));
     }
   }, [data]);
 
-  // Deselect all sessions
   const deselectAllSessions = useCallback(() => {
     setSelectedSessions([]);
   }, []);
 
-  // Process payment
   const handlePayment = useCallback(
     async (paymentMethod) => {
       if (!selectedSessions.length) {
@@ -78,44 +99,35 @@ export function usePayment() {
 
       try {
         const amount = calculateAmount();
-        const result = await processPayment(amount, paymentMethod);
+        const paymentMethodLabel = getPaymentMethodLabel(paymentMethod);
+        const result = await processPayment(
+          userId,
+          selectedSessions,
+          amount,
+          paymentMethod,
+        );
 
         if (result.success) {
-          // Update data to mark sessions as paid
-          setData((prevData) => ({
-            ...prevData,
-            unpaidSessions: prevData.unpaidSessions.filter(
-              (s) => !selectedSessions.includes(s.id),
-            ),
-            transactionHistory: [
-              {
-                id: `txn-${Date.now()}`,
-                date: new Date(),
-                sessions: selectedSessions,
-                amount,
-                paymentMethod,
-                status: "completed",
-                transactionId: result.transactionId,
-                receipt: result.receipt,
-              },
-              ...prevData.transactionHistory,
-            ],
-          }));
+          syncPaymentData();
 
           setPaymentResult({
             success: true,
             transactionId: result.transactionId,
             amount,
-            paymentMethod,
-            receipt: result.receipt,
+            paymentMethod: paymentMethodLabel,
+            receipt: {
+              ...result.receipt,
+              method: paymentMethodLabel,
+            },
             sessionsCount: selectedSessions.length,
           });
 
           setSelectedSessions([]);
+          setSelectedMethod(null);
         } else {
           setPaymentResult({
             success: false,
-            error: result.message,
+            error: result.message || "Payment could not be completed.",
           });
         }
       } catch (err) {
@@ -128,17 +140,19 @@ export function usePayment() {
 
       setIsProcessing(false);
     },
-    [selectedSessions, calculateAmount],
+    [calculateAmount, getPaymentMethodLabel, selectedSessions, syncPaymentData, userId],
   );
 
-  // Clear payment result
   const clearPaymentResult = useCallback(() => {
     setPaymentResult(null);
-  }, []);
+    syncPaymentData();
+  }, [syncPaymentData]);
 
   const stats = data
     ? {
-        totalUnpaid: data.totalUnpaid,
+        payableUnpaidAmount: data.totalUnpaid,
+        currentEstimatedFee: data.activeEstimate?.fee || 0,
+        totalAmountDue: data.totalAmountDue,
         unpaidCount: data.unpaidSessions.length,
         selectedCount: selectedSessions.length,
         amountToPay: calculateAmount(),

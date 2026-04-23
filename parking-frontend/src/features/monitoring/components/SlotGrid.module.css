@@ -4,13 +4,13 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
   gap: 12px;
   margin-bottom: 24px;
 }
 
 .slot {
-  padding: 16px 8px;
+  padding: 14px 8px 12px;
   background-color: #f8f9fa;
   border: 2px solid transparent;
   border-radius: 6px;
@@ -41,11 +41,39 @@
   margin-bottom: 4px;
 }
 
+.statusLabel {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #6b7c8f;
+  margin-bottom: 6px;
+}
+
 .duration {
   font-size: 10px;
   font-weight: 600;
   color: #7f8c8d;
   margin-top: 4px;
+}
+
+.statusSelect {
+  width: 100%;
+  margin-top: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(44, 62, 80, 0.18);
+  background: rgba(255, 255, 255, 0.96);
+  color: #2c3e50;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.statusSelect:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.16);
 }
 
 /* Free slot styling */
@@ -82,8 +110,7 @@
 .status-unavailable {
   background: linear-gradient(135deg, rgba(149, 165, 166, 0.1) 0%, rgba(149, 165, 166, 0.05) 100%);
   border-color: #95a5a6;
-  cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 0.72;
 }
 
 .status-unavailable .slotStatus {
@@ -105,7 +132,7 @@
 
 @media (max-width: 768px) {
   .grid {
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
     gap: 10px;
   }
 
@@ -119,5 +146,10 @@
 
   .slotStatus {
     font-size: 16px;
+  }
+
+  .statusSelect {
+    font-size: 10px;
+    padding: 5px 6px;
   }
 }

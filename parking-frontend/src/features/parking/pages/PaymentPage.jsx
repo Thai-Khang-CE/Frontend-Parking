@@ -4,6 +4,7 @@
  * Available to: student, staff
  */
 
+import { useLocation } from 'react-router-dom';
 import { usePayment } from '../hooks';
 import {
   BillingDetailsTable,
@@ -15,6 +16,7 @@ import {
 import styles from './PaymentPage.module.css';
 
 function PaymentPage() {
+  const location = useLocation();
   const {
     data,
     loading,
@@ -32,6 +34,7 @@ function PaymentPage() {
     handlePayment,
     calculateAmount,
   } = usePayment();
+  const arrivedFromMyParking = location.state?.source === 'my-parking';
 
   if (error) {
     return (
@@ -72,6 +75,7 @@ function PaymentPage() {
 
   const hasUnpaidSessions =
     data.unpaidSessions && data.unpaidSessions.length > 0;
+  const hasCurrentEstimate = (stats?.currentEstimatedFee || 0) > 0;
 
   return (
     <div className={`${styles.page} app-page`}>
@@ -93,6 +97,26 @@ function PaymentPage() {
         selectedCount={selectedSessions.length}
         amountToPay={calculateAmount()}
       />
+
+      {arrivedFromMyParking && hasUnpaidSessions && (
+        <section className={styles.entryNotice}>
+          <p className={styles.entryNoticeTitle}>Payment flow ready</p>
+          <p className={styles.entryNoticeText}>
+            Outstanding parking sessions are preselected. Choose a payment method and click
+            <strong> Pay Now</strong> to complete the transaction.
+          </p>
+        </section>
+      )}
+
+      {hasCurrentEstimate && (
+        <section className={styles.estimateNotice}>
+          <p className={styles.estimateNoticeTitle}>Current session estimate</p>
+          <p className={styles.estimateNoticeText}>
+            The total amount due includes your active parking session estimate. It updates when
+            you extend time, and the session becomes directly payable after exit.
+          </p>
+        </section>
+      )}
 
       <div className={styles.mainContent}>
         <div className={styles.leftColumn}>
@@ -130,13 +154,13 @@ function PaymentPage() {
                   selectedSessions.length === 0 ||
                   isProcessing
                 }
-              >
-                {isProcessing ? (
+                >
+                  {isProcessing ? (
                   <>
                     <span className={styles.spinner} /> Processing Payment...
                   </>
                 ) : (
-                  <>Pay VND {calculateAmount().toLocaleString()}</>
+                  <>Pay Now - VND {calculateAmount().toLocaleString()}</>
                 )}
               </button>
 
@@ -146,11 +170,22 @@ function PaymentPage() {
             </div>
           )}
 
-          {!hasUnpaidSessions && (
+          {!hasUnpaidSessions && !hasCurrentEstimate && (
             <div className={`${styles.noPayment} app-state app-state--empty`}>
               <p className={styles.noPaymentIcon}>OK</p>
               <h3>All Paid Up</h3>
               <p>You do not have any unpaid parking sessions. Your account is up to date.</p>
+            </div>
+          )}
+
+          {!hasUnpaidSessions && hasCurrentEstimate && (
+            <div className={`${styles.noPayment} app-state app-state--empty`}>
+              <p className={styles.noPaymentIcon}>EST</p>
+              <h3>Estimate Available</h3>
+              <p>
+                Your active parking session has an updated estimated fee. Exit the parking session
+                to convert it into a payable bill.
+              </p>
             </div>
           )}
         </div>

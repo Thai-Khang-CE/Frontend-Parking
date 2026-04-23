@@ -4,7 +4,7 @@
  * Mock authentication for university project
  */
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext(null);
 
@@ -19,27 +19,45 @@ const MOCK_USERS = {
   'visitor': { password: 'visitor123', role: 'visitor', name: 'Visitor' }
 };
 
+const AUTH_STORAGE_KEY = 'parkingUser';
+const VALID_ROLES = new Set(['student', 'staff', 'admin', 'visitor']);
+
+function readStoredUser() {
+  try {
+    const storedUser = localStorage.getItem(AUTH_STORAGE_KEY);
+
+    if (!storedUser) {
+      return null;
+    }
+
+    const parsedUser = JSON.parse(storedUser);
+
+    if (
+      !parsedUser ||
+      typeof parsedUser !== 'object' ||
+      typeof parsedUser.email !== 'string' ||
+      typeof parsedUser.name !== 'string' ||
+      !VALID_ROLES.has(parsedUser.role)
+    ) {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      return null;
+    }
+
+    return parsedUser;
+  } catch (error) {
+    console.error('Failed to restore stored user:', error);
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    return null;
+  }
+}
+
 /**
  * AuthProvider component - place at app root
  * Provides authentication state and login/logout methods
  */
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  // Check localStorage on mount
-  useEffect(() => {
-    const storedUser = localStorage.getItem('parkingUser');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error('Failed to parse stored user:', e);
-        localStorage.removeItem('parkingUser');
-      }
-    }
-    setLoading(false);
-  }, []);
+  const [user, setUser] = useState(() => readStoredUser());
+  const loading = false;
 
   /**
    * Mock login with email/username and password
@@ -57,7 +75,7 @@ export function AuthProvider({ children }) {
           loginTime: new Date().toISOString()
         };
         setUser(userData);
-        localStorage.setItem('parkingUser', JSON.stringify(userData));
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userData));
         return { success: true };
       }
       return { success: false, error: 'Invalid password' };
@@ -72,7 +90,7 @@ export function AuthProvider({ children }) {
         loginTime: new Date().toISOString()
       };
       setUser(userData);
-      localStorage.setItem('parkingUser', JSON.stringify(userData));
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userData));
       return { success: true };
     }
 
@@ -90,7 +108,7 @@ export function AuthProvider({ children }) {
       loginTime: new Date().toISOString()
     };
     setUser(userData);
-    localStorage.setItem('parkingUser', JSON.stringify(userData));
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userData));
     return { success: true };
   };
 
@@ -99,7 +117,7 @@ export function AuthProvider({ children }) {
    */
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('parkingUser');
+    localStorage.removeItem(AUTH_STORAGE_KEY);
   };
 
   const value = {

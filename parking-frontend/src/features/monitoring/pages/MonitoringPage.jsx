@@ -14,7 +14,17 @@ import { getMonitoringZoneOptions } from '../../../mock/monitoringMock.js';
 import styles from './MonitoringPage.module.css';
 
 function MonitoringPage() {
-  const { data, loading, error, timeAgo, selectedZoneId, selectZone, refreshSlots } = useMonitoring();
+  const {
+    data,
+    loading,
+    error,
+    timeAgo,
+    selectedZoneId,
+    selectZone,
+    refreshSlots,
+    canEditSlots,
+    updateSlotStatus
+  } = useMonitoring();
   const zoneOptions = getMonitoringZoneOptions();
 
   if (error) {
@@ -113,8 +123,22 @@ function MonitoringPage() {
         </div>
 
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Slot Status</h2>
-          <SlotGrid slots={data.slots} />
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Slot Status</h2>
+            <span className={canEditSlots ? styles.editBadge : styles.readOnlyBadge}>
+              {canEditSlots ? 'Admin Edit Enabled' : 'Read Only'}
+            </span>
+          </div>
+          <p className={styles.sectionHint}>
+            {canEditSlots
+              ? 'Select a new status for any slot. Updates apply to the shared parking state immediately.'
+              : 'Staff can monitor slot status, but only admins can edit slot availability.'}
+          </p>
+          <SlotGrid
+            slots={data.slots}
+            canEdit={canEditSlots}
+            onChangeStatus={updateSlotStatus}
+          />
         </div>
       </div>
 

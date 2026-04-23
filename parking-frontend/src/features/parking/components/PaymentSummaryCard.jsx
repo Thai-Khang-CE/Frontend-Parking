@@ -20,10 +20,26 @@ function PaymentSummaryCard({
       </div>
 
       <div className={styles.content}>
+        {stats.currentEstimatedFee > 0 && (
+          <div className={styles.row}>
+            <span className={styles.label}>Current Session Estimate:</span>
+            <span className={styles.value}>
+              {formatCurrency(stats.currentEstimatedFee)}
+            </span>
+          </div>
+        )}
+
         <div className={styles.row}>
-          <span className={styles.label}>Total Unpaid Amount:</span>
+          <span className={styles.label}>Payable Unpaid Sessions:</span>
+          <span className={styles.value}>
+            {formatCurrency(stats.payableUnpaidAmount)}
+          </span>
+        </div>
+
+        <div className={styles.row}>
+          <span className={styles.label}>Total Amount Due:</span>
           <span className={styles.amount}>
-            {formatCurrency(stats.totalUnpaid)}
+            {formatCurrency(stats.totalAmountDue)}
           </span>
         </div>
 
@@ -37,7 +53,7 @@ function PaymentSummaryCard({
               </span>
             </div>
             <div className={styles.row}>
-              <span className={styles.label}>Amount to Pay:</span>
+              <span className={styles.label}>Amount to Pay Now:</span>
               <span className={styles.amountToPay}>
                 {formatCurrency(amountToPay)}
               </span>
@@ -47,22 +63,32 @@ function PaymentSummaryCard({
 
         {selectedCount === 0 && stats.unpaidCount > 0 && (
           <div className={styles.note}>
-            <p>Select sessions to proceed with payment.</p>
+            <p>Select completed unpaid sessions to proceed with payment.</p>
           </div>
         )}
 
-        {stats.unpaidCount === 0 && (
+        {stats.unpaidCount === 0 && stats.currentEstimatedFee > 0 && (
+          <div className={styles.note}>
+            <p>
+              Your current session estimate is shown above. It will become payable
+              after the parking session is exited.
+            </p>
+          </div>
+        )}
+
+        {stats.unpaidCount === 0 && stats.currentEstimatedFee === 0 && (
           <div className={styles.note}>
             <p>No unpaid parking sessions.</p>
           </div>
         )}
       </div>
 
-      {selectedCount > 0 && (
+      {(selectedCount > 0 || stats.currentEstimatedFee > 0) && (
         <div className={styles.info}>
           <p>
-            Info: you are about to pay for {selectedCount} parking session
-            {selectedCount > 1 ? "s" : ""}.
+            {selectedCount > 0
+              ? `Info: you are about to pay for ${selectedCount} parking session${selectedCount > 1 ? "s" : ""}.`
+              : "Info: the current session estimate updates automatically as parking time changes."}
           </p>
         </div>
       )}
