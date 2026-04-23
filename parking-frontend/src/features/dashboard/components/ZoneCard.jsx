@@ -6,23 +6,29 @@
 import styles from './ZoneCard.module.css';
 
 function ZoneCard({ zone }) {
-  const statusClass = zone.status === 'FULL' ? styles.statusFull : styles.statusAvailable;
-  const occupancyColor = zone.occupancyPercentage > 80 ? 'high' : zone.occupancyPercentage > 50 ? 'medium' : 'low';
+  const isFull = zone.status === 'FULL';
+  const occupancyColor =
+    zone.occupancyPercentage > 80 ? 'high' : zone.occupancyPercentage > 50 ? 'medium' : 'low';
 
   return (
-    <div className={styles.card}>
+    <div className={`${styles.card} ${isFull ? styles.statusFull : styles.statusAvailable}`}>
+      {/* Header: zone name + status badge */}
       <div className={styles.header}>
-        <h3 className={styles.zoneName}>{zone.name}</h3>
-        <span className={`${styles.status} ${statusClass}`}>
-          {zone.status === 'FULL' ? '🔴 FULL' : '🟢 AVAILABLE'}
+        <div className={styles.zoneInfo}>
+          <h3 className={styles.zoneName}>{zone.name}</h3>
+          <p className={styles.zoneOccupiedLabel}>{zone.occupiedSlots} slots occupied</p>
+        </div>
+        <span className={`${styles.status} ${isFull ? styles.statusFull : styles.statusAvailable}`}>
+          <span className={styles.statusDot} />
+          {isFull ? 'Full' : 'Available'}
         </span>
       </div>
 
-      <div className={styles.progressContainer}>
-        <div className={styles.progressLabel}>
-          <span className={styles.occupied}>{zone.occupiedSlots} occupied</span>
-          <span className={styles.percent}>{zone.occupancyPercentage}%</span>
-        </div>
+      {/* Large occupancy % — hero number */}
+      <div className={styles.occupancyBig}>{zone.occupancyPercentage}%</div>
+
+      {/* Progress bar */}
+      <div className={styles.progressSection}>
         <div className={styles.progressBar}>
           <div
             className={`${styles.progressFill} ${styles[`color-${occupancyColor}`]}`}
@@ -31,6 +37,7 @@ function ZoneCard({ zone }) {
         </div>
       </div>
 
+      {/* Available / Total mini-stats */}
       <div className={styles.stats}>
         <div className={styles.statItem}>
           <div className={styles.statValue}>{zone.availableSlots}</div>

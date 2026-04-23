@@ -1,220 +1,305 @@
 /**
  * Dashboard Page Styling (CSS Module)
- * Styling for the main dashboard view
+ * Professional SaaS dashboard — shadow-depth design, strong hierarchy, full-screen feel
  */
 
+/* ────────────────────────────────────────────
+   Page root
+──────────────────────────────────────────── */
 .page {
+  display: flex;
+  flex-direction: column;
   width: 100%;
 }
 
-.header {
+/* ────────────────────────────────────────────
+   Hero header — the visual anchor of the page
+   Large gradient panel with strong title presence
+──────────────────────────────────────────── */
+.heroHeader {
+  margin-bottom: 32px;
+  padding: 32px 24px 28px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 55%, #1e40af 100%);
+  border-radius: 0 0 18px 18px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle diagonal light sheen */
+.heroHeader::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+/* Bottom fade into page */
+.heroHeader::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #0ea5e9, #10b981);
+}
+
+.heroInner {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 40px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #ecf0f1;
+  align-items: flex-end;
+  position: relative;
+  z-index: 1;
 }
 
-.header h1 {
-  margin: 0 0 8px 0;
-  font-size: 32px;
-  font-weight: 600;
-  color: #2c3e50;
+.heroLeft {}
+
+.heroTitle {
+  font-family: var(--heading, system-ui);
+  font-size: 34px;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: -0.8px;
+  margin: 0 0 6px;
+  line-height: 1.1;
 }
 
-.subtitle {
+.heroSubtitle {
+  font-size: 14px;
+  color: rgba(248, 250, 252, 0.6);
   margin: 0;
-  font-size: 15px;
-  color: #7f8c8d;
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
 
-.status {
+.heroMeta {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 8px;
 }
 
-.loading {
-  font-size: 13px;
-  color: #3498db;
-  font-weight: 500;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.6;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.lastUpdated {
+.heroLive {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   font-size: 12px;
-  color: #95a5a6;
-}
-
-.section {
-  margin-bottom: 40px;
-}
-
-.section h2 {
-  margin: 0 0 20px 0;
-  font-size: 20px;
   font-weight: 600;
-  color: #2c3e50;
-  border-bottom: 2px solid #ecf0f1;
-  padding-bottom: 12px;
-}
-
-.summaryGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-.zoneGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-}
-
-.quickStats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-.statBox {
-  padding: 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-  transition: all 0.3s ease;
-}
-
-.statBox:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-}
-
-.statBox:nth-child(2) {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  box-shadow: 0 4px 12px rgba(245, 87, 108, 0.2);
-}
-
-.statBox:nth-child(2):hover {
-  box-shadow: 0 8px 20px rgba(245, 87, 108, 0.3);
-}
-
-.statBox:nth-child(3) {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  box-shadow: 0 4px 12px rgba(79, 172, 254, 0.2);
-}
-
-.statBox:nth-child(3):hover {
-  box-shadow: 0 8px 20px rgba(79, 172, 254, 0.3);
-}
-
-.statTitle {
-  display: block;
-  font-size: 13px;
-  font-weight: 500;
-  opacity: 0.9;
-  margin-bottom: 12px;
+  color: #34d399;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.06em;
 }
 
-.statValue {
-  display: block;
-  font-size: 32px;
-  font-weight: bold;
-  line-height: 1;
+.heroLiveDot {
+  width: 8px;
+  height: 8px;
+  background: #34d399;
+  border-radius: 50%;
+  animation: livePulse 2.4s ease-in-out infinite;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.25);
 }
 
-.error {
-  padding: 20px;
-  background-color: #ffebee;
-  border: 1px solid #ef9a9a;
-  border-radius: 6px;
-  color: #c62828;
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.25); }
+  50%       { opacity: 0.6; transform: scale(0.85); box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.1); }
 }
 
-.error p {
+.heroTime {
+  font-size: 12px;
+  color: rgba(248, 250, 252, 0.45);
+}
+
+/* ────────────────────────────────────────────
+   Sections
+──────────────────────────────────────────── */
+.section {
+  margin-bottom: 36px;
+}
+
+/* Section header row: label + thin decorative rule */
+.sectionHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.sectionLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
   margin: 0;
 }
 
-@media (max-width: 1024px) {
-  .summaryGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.sectionRule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, #e2e8f0 0%, transparent 100%);
+}
 
-  .zoneGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+/* ────────────────────────────────────────────
+   Summary cards grid — 4 columns, premium depth
+──────────────────────────────────────────── */
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
 
-  .quickStats {
-    grid-template-columns: repeat(2, 1fr);
-  }
+/* ────────────────────────────────────────────
+   Zone cards grid
+──────────────────────────────────────────── */
+.zoneGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+}
+
+/* ────────────────────────────────────────────
+   Quick summary strip — rich detail cards
+   not just big number + label but an
+   informational panel at the bottom
+──────────────────────────────────────────── */
+.quickGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.quickCard {
+  position: relative;
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px 24px;
+  overflow: hidden;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 4px 12px rgba(15, 23, 42, 0.06);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.quickCard:hover {
+  box-shadow:
+    0 4px 6px rgba(15, 23, 42, 0.06),
+    0 12px 28px rgba(15, 23, 42, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Colored left accent bar */
+.quickCard::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+}
+
+.quickCard:nth-child(1)::before { background: linear-gradient(180deg, #818cf8, #6366f1); }
+.quickCard:nth-child(2)::before { background: linear-gradient(180deg, #38bdf8, #0284c7); }
+.quickCard:nth-child(3)::before { background: linear-gradient(180deg, #34d399, #059669); }
+
+.quickIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.quickCard:nth-child(1) .quickIcon { background: #eef2ff; }
+.quickCard:nth-child(2) .quickIcon { background: #e0f2fe; }
+.quickCard:nth-child(3) .quickIcon { background: #d1fae5; }
+
+.quickBody {}
+
+.quickLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0 0 5px;
+}
+
+.quickValue {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1;
+  letter-spacing: -0.5px;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--heading, system-ui);
+}
+
+.quickValue span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  letter-spacing: 0;
+}
+
+/* ────────────────────────────────────────────
+   Error state
+──────────────────────────────────────────── */
+.error {
+  padding: 24px 28px;
+  background: #fef2f2;
+  border: 1.5px solid #fca5a5;
+  border-radius: 12px;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 500;
+}
+.error p { margin: 0; }
+
+/* ────────────────────────────────────────────
+   Responsive
+──────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .summaryGrid { grid-template-columns: repeat(2, 1fr); }
+  .quickGrid   { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .quickGrid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
-  .header {
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 24px;
+  .heroHeader {
+    margin-bottom: 28px;
+    padding: 24px 20px 22px;
+    border-radius: 0 0 14px 14px;
   }
+  .heroTitle   { font-size: 26px; }
+  .heroInner   { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .heroMeta    { align-items: flex-start; }
 
-  .header h1 {
-    font-size: 24px;
-  }
+  .summaryGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .zoneGrid    { grid-template-columns: 1fr; gap: 12px; }
+  .quickGrid   { grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
-  .status {
-    align-items: flex-start;
-  }
-
-  .summaryGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .zoneGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .quickStats {
-    grid-template-columns: 1fr;
-  }
-
-  .section h2 {
-    font-size: 18px;
-    margin-bottom: 16px;
-  }
+  .quickCard { padding: 16px 18px; gap: 14px; }
+  .quickValue { font-size: 22px; }
 }
 
 @media (max-width: 480px) {
-  .summaryGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .statBox {
-    padding: 16px;
-  }
-
-  .statTitle {
-    font-size: 12px;
-  }
-
-  .statValue {
-    font-size: 24px;
-  }
+  .summaryGrid { grid-template-columns: 1fr; }
+  .quickGrid   { grid-template-columns: 1fr; }
 }

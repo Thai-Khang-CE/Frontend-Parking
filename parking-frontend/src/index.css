@@ -52,6 +52,7 @@
 
 body {
   margin: 0;
+  overflow-x: hidden;
 }
 
 #root {
@@ -90,6 +91,7 @@ h2 {
 }
 p {
   margin: 0;
+  overflow-x: hidden;
 }
 
 code,

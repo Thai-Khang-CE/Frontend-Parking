@@ -1,6 +1,7 @@
 /**
  * Header Styling (CSS Module)
  * Consistent styling for header across all pages
+ * Includes user info and logout button
  */
 
 .header {
@@ -15,6 +16,13 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.titleSection {
+  flex: 1;
 }
 
 .title {
@@ -31,9 +39,60 @@
   font-weight: 300;
 }
 
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  white-space: nowrap;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.userName {
+  font-weight: 500;
+  color: #ecf0f1;
+}
+
+.userRole {
+  background-color: rgba(52, 152, 219, 0.3);
+  color: #bdc3c7;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.logoutButton {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.logoutButton:hover {
+  background-color: #c0392b;
+}
+
 @media (max-width: 768px) {
   .header {
     padding: 15px 0;
+  }
+
+  .container {
+    flex-direction: column;
+    gap: 10px;
   }
 
   .title {
@@ -43,4 +102,17 @@
   .subtitle {
     font-size: 12px;
   }
+
+  .userSection {
+    width: 100%;
+    justify-content: space-between;
+    font-size: 12px;
+    gap: 10px;
+  }
+
+  .logoutButton {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
 }
+

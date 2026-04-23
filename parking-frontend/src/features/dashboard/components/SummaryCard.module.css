@@ -1,106 +1,111 @@
 /**
  * SummaryCard Styling (CSS Module)
- * Style for individual summary metric cards
+ * Premium metric cards — left-accent depth design
  */
 
 .card {
-  padding: 24px;
-  background-color: #fff;
-  border: 1px solid #ecf0f1;
-  border-radius: 6px;
-  text-align: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  padding: 26px 24px 24px;
+  background: #fff;
+  border-radius: 14px;
+  text-align: left;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  overflow: hidden;
+
+  /* Layered shadow — depth without borders */
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 4px 12px rgba(15, 23, 42, 0.07);
 }
 
+/* Colored left accent bar — always visible */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 0;
+  bottom: 14px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  transition: top 0.25s ease, bottom 0.25s ease;
+}
+
+/* Hover lift */
 .card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+  box-shadow:
+    0 4px 6px rgba(15, 23, 42, 0.06),
+    0 12px 28px rgba(15, 23, 42, 0.11);
+  transform: translateY(-3px);
 }
 
+/* ── Color variants: accent bar + label color + tint on hover ── */
+.color-total::before    { background: linear-gradient(180deg, #818cf8, #6366f1); }
+.color-occupied::before { background: linear-gradient(180deg, #f87171, #ef4444); }
+.color-available::before{ background: linear-gradient(180deg, #34d399, #10b981); }
+.color-occupancy::before{ background: linear-gradient(180deg, #fbbf24, #f59e0b); }
+.color-default::before  { background: linear-gradient(180deg, #c084fc, #a855f7); }
+
+.color-total:hover    { background: #f5f3ff; }
+.color-occupied:hover { background: #fff5f5; }
+.color-available:hover{ background: #f0fdf4; }
+.color-occupancy:hover{ background: #fffbeb; }
+.color-default:hover  { background: #faf5ff; }
+
+/* ── Icon ── */
 .icon {
-  font-size: 28px;
-  margin-bottom: 12px;
+  font-size: 20px;
+  margin-bottom: 16px;
   opacity: 0.7;
+  line-height: 1;
+}
+
+/* ── Value + optional unit ── */
+.valueRow {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin-bottom: 6px;
 }
 
 .value {
-  font-size: 36px;
-  font-weight: bold;
-  margin: 12px 0;
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -2px;
   font-variant-numeric: tabular-nums;
+  font-family: var(--heading, system-ui);
 }
 
 .unit {
-  font-size: 14px;
-  color: #7f8c8d;
-  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #94a3b8;
+  line-height: 1;
 }
 
+/* ── Label ── */
 .label {
-  font-size: 13px;
-  color: #95a5a6;
-  font-weight: 500;
-  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.07em;
 }
 
-/* Color variants */
-.color-default .value {
-  color: #2c3e50;
-}
+/* ── Color-coded value per variant ── */
+.color-total .value    { color: #4f46e5; }
+.color-occupied .value { color: #dc2626; }
+.color-available .value{ color: #059669; }
+.color-occupancy .value{ color: #d97706; }
+.color-default .value  { color: var(--text-h, #08060d); }
 
-.color-total .value {
-  color: #3498db;
-}
-
-.color-occupied .value {
-  color: #e74c3c;
-}
-
-.color-available .value {
-  color: #2ecc71;
-}
-
-.color-occupancy .value {
-  color: #f39c12;
-}
-
-.color-default:hover {
-  border-color: #bdc3c7;
-}
-
-.color-total:hover {
-  border-color: #3498db;
-  background-color: #ecf6ff;
-}
-
-.color-occupied:hover {
-  border-color: #e74c3c;
-  background-color: #ffecec;
-}
-
-.color-available:hover {
-  border-color: #2ecc71;
-  background-color: #ecffec;
-}
-
-.color-occupancy:hover {
-  border-color: #f39c12;
-  background-color: #fff9ec;
-}
-
+/* ── Responsive ── */
 @media (max-width: 768px) {
-  .card {
-    padding: 16px;
-  }
+  .card { padding: 20px 18px 18px; }
+  .value { font-size: 36px; letter-spacing: -1px; }
+  .icon  { font-size: 17px; margin-bottom: 12px; }
+}
 
-  .value {
-    font-size: 28px;
-  }
-
-  .label {
-    font-size: 12px;
-  }
+@media (max-width: 480px) {
+  .value { font-size: 30px; letter-spacing: -0.5px; }
 }

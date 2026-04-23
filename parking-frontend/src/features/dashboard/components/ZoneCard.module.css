@@ -1,138 +1,193 @@
 /**
  * ZoneCard Styling (CSS Module)
- * Style for zone overview cards with progress bars
+ * Modern zone cards — distinct visual identity per zone,
+ * readable progress bar, premium mini-stats
  */
 
 .card {
-  padding: 20px;
-  background-color: #fff;
-  border: 1px solid #ecf0f1;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  overflow: hidden;
+
+  /* Depth: layered shadow, no border */
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+/* Colored top strip — always visible, grows on hover */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 16px 16px 0 0;
+  transition: height 0.25s ease;
 }
 
 .card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 4px 6px rgba(15, 23, 42, 0.06),
+    0 12px 28px rgba(15, 23, 42, 0.1);
   transform: translateY(-2px);
 }
 
+.card:hover::before {
+  height: 4px;
+}
+
+/* ── Card header ── */
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 12px;
 }
+
+.zoneInfo {}
 
 .zoneName {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #2c3e50;
+  font-family: var(--heading, system-ui);
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px;
+  letter-spacing: -0.2px;
+  line-height: 1.2;
 }
 
-.status {
-  padding: 4px 12px;
-  border-radius: 20px;
+.zoneOccupiedLabel {
   font-size: 12px;
-  font-weight: bold;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* ── Status badge — pill with dot ── */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .statusAvailable {
-  background-color: #d4edda;
-  color: #155724;
+  background: #d1fae5;
+  color: #065f46;
 }
+.statusAvailable .statusDot { background: #10b981; }
 
 .statusFull {
-  background-color: #f8d7da;
-  color: #721c24;
+  background: #fee2e2;
+  color: #991b1b;
+}
+.statusFull .statusDot { background: #ef4444; }
+
+/* Status-driven top accent — set via JS class on card */
+.card.statusFull::before    { background: linear-gradient(90deg, #f87171, #ef4444); }
+.card.statusAvailable::before { background: linear-gradient(90deg, #34d399, #10b981); }
+
+/* ── Occupancy % — large and prominent ── */
+.occupancyBig {
+  font-size: 36px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -1px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--heading, system-ui);
+  margin-bottom: 2px;
 }
 
-.progressContainer {
-  margin-bottom: 16px;
-}
-
-.progressLabel {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  margin-bottom: 8px;
-}
-
-.occupied {
-  color: #7f8c8d;
-}
-
-.percent {
-  font-weight: bold;
-  color: #2c3e50;
+/* ── Progress section ── */
+.progressSection {
+  margin: 12px 0 18px;
 }
 
 .progressBar {
   width: 100%;
   height: 8px;
-  background-color: #ecf0f1;
-  border-radius: 4px;
+  background: #f1f5f9;
+  border-radius: 8px;
   overflow: hidden;
 }
 
 .progressFill {
   height: 100%;
-  border-radius: 4px;
-  transition: width 0.5s ease;
+  border-radius: 8px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.color-low {
-  background: linear-gradient(90deg, #2ecc71, #27ae60);
-}
+.color-low    { background: linear-gradient(90deg, #34d399, #10b981); }
+.color-medium { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+.color-high   { background: linear-gradient(90deg, #f87171, #ef4444); }
 
-.color-medium {
-  background: linear-gradient(90deg, #f39c12, #e67e22);
-}
-
-.color-high {
-  background: linear-gradient(90deg, #e74c3c, #c0392b);
-}
-
+/* ── Stats row ── */
 .stats {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 10px;
 }
 
 .statItem {
   text-align: center;
-  padding: 12px;
-  background-color: #f8f9fa;
-  border-radius: 4px;
+  padding: 14px 8px;
+  background: #f8fafc;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.card:hover .statItem {
+  background: #f1f5f9;
 }
 
 .statValue {
-  font-size: 20px;
-  font-weight: bold;
-  color: #2c3e50;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--heading, system-ui);
+  letter-spacing: -0.5px;
 }
 
 .statLabel {
-  font-size: 12px;
-  color: #95a5a6;
-  margin-top: 4px;
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 5px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.05em;
 }
 
+/* ── Responsive ── */
 @media (max-width: 768px) {
-  .card {
-    padding: 16px;
-  }
+  .card { padding: 20px 18px; }
+  .occupancyBig { font-size: 30px; }
+  .zoneName { font-size: 15px; }
+  .statValue { font-size: 20px; }
+}
 
-  .zoneName {
-    font-size: 16px;
-  }
-
-  .statValue {
-    font-size: 18px;
-  }
+@media (max-width: 480px) {
+  .occupancyBig { font-size: 26px; }
 }

@@ -1,0 +1,263 @@
+/**
+ * Billing Details Table Styles
+ */
+
+.container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.selectActions {
+  display: flex;
+  gap: 10px;
+}
+
+.selectButton {
+  padding: 6px 12px;
+  background-color: #ecf0f1;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.selectButton:hover {
+  background-color: #d5dbdd;
+  border-color: #95a5a6;
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.emoji {
+  display: block;
+  font-size: 48px;
+  margin: 16px 0;
+}
+
+.message {
+  color: #666;
+  font-weight: 600;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table thead {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 12px;
+}
+
+.thCheckbox {
+  width: 40px;
+  padding-left: 16px;
+  text-align: center;
+}
+
+.thDate {
+  min-width: 200px;
+}
+
+.thFee {
+  text-align: right;
+  padding-right: 20px;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.table tbody tr.selected {
+  background-color: #e8f5e9;
+}
+
+.table td {
+  padding: 14px 16px;
+  color: #333;
+}
+
+.tdCheckbox {
+  text-align: center;
+  padding-left: 16px;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #27ae60;
+}
+
+.dateGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dateFull {
+  font-weight: 500;
+  color: #333;
+  font-size: 13px;
+}
+
+.timeRange {
+  font-size: 12px;
+  color: #999;
+}
+
+.zoneBadge {
+  display: inline-block;
+  background-color: #e8f4f8;
+  color: #0c5460;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 500;
+  border: 1px solid #b8daff;
+}
+
+.tdZone {
+  padding: 14px 12px;
+}
+
+.tdSlot {
+  text-align: center;
+  font-weight: 500;
+}
+
+.tdDuration {
+  text-align: center;
+  font-weight: 500;
+}
+
+.tdFee {
+  text-align: right;
+  padding-right: 20px;
+}
+
+.fee {
+  font-weight: 600;
+  color: #e74c3c;
+  font-size: 14px;
+}
+
+.selectionSummary {
+  padding: 12px 20px;
+  background-color: #e8f5e9;
+  border-top: 1px solid #c8e6c9;
+  color: #155724;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.selectionSummary p {
+  margin: 0;
+}
+
+@media (max-width: 1024px) {
+  .table th,
+  .table td {
+    padding: 12px 10px;
+  }
+
+  .thFee {
+    padding-right: 10px;
+  }
+
+  .tdFee {
+    padding-right: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .selectActions {
+    width: 100%;
+  }
+
+  .selectButton {
+    flex: 1;
+  }
+
+  .table {
+    font-size: 12px;
+  }
+
+  .table th,
+  .table td {
+    padding: 10px 8px;
+  }
+
+  .thCheckbox,
+  .tdCheckbox {
+    padding-left: 8px;
+  }
+
+  .thFee,
+  .tdFee {
+    padding-right: 8px;
+  }
+
+  .dateFull {
+    font-size: 12px;
+  }
+
+  .timeRange {
+    font-size: 11px;
+  }
+
+  .fee {
+    font-size: 13px;
+  }
+}

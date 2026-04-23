@@ -1,6 +1,6 @@
 /**
  * Navigation Styling (CSS Module)
- * Navigation bar with active state styling
+ * Navigation bar with active state styling and role indicator
  */
 
 .navigation {
@@ -15,12 +15,19 @@
   padding: 0 20px;
 }
 
+.navWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .navList {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   gap: 0;
+  flex: 1;
 }
 
 .navItem {
@@ -50,6 +57,24 @@
   border-bottom-color: #2980b9;
 }
 
+.roleIndicator {
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  margin-left: auto;
+}
+
+.roleLabel {
+  background-color: rgba(52, 152, 219, 0.2);
+  color: #3498db;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border: 1px solid #3498db;
+}
+
 @media (max-width: 768px) {
   .navList {
     flex-wrap: wrap;
@@ -59,4 +84,14 @@
     padding: 12px 15px;
     font-size: 14px;
   }
+
+  .roleIndicator {
+    padding: 0 10px;
+  }
+
+  .roleLabel {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
 }
+

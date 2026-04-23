@@ -1,0 +1,240 @@
+/**
+ * Session History Table Styles
+ */
+
+.container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  margin-top: 24px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  color: #999;
+}
+
+.empty p {
+  margin: 0;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  margin: -20px -20px -20px -20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table thead {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 12px;
+}
+
+.thDate {
+  padding-left: 20px;
+}
+
+.thStatus {
+  padding-right: 20px;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.table td {
+  padding: 14px 16px;
+  color: #333;
+}
+
+.tdDate {
+  padding-left: 20px;
+  padding-right: 16px;
+}
+
+.tdStatus {
+  padding-right: 20px;
+}
+
+.dateGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dateFull {
+  font-weight: 500;
+  color: #333;
+}
+
+.timeRange {
+  font-size: 12px;
+  color: #999;
+}
+
+.zoneBadge {
+  display: inline-block;
+  background-color: #e8f4f8;
+  color: #0c5460;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 500;
+  border: 1px solid #b8daff;
+}
+
+.tdZone {
+  padding: 14px 12px;
+}
+
+.tdSlot {
+  text-align: center;
+  font-weight: 500;
+}
+
+.tdDuration {
+  text-align: center;
+  font-weight: 500;
+}
+
+.feeGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.amount {
+  font-weight: 600;
+  color: #333;
+}
+
+.paymentBadge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.paymentBadge.paid {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.paymentBadge.unpaid {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.statusBadge.completed {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+@media (max-width: 1024px) {
+  .table th,
+  .table td {
+    padding: 12px 10px;
+  }
+
+  .thDate,
+  .tdDate {
+    padding-left: 10px;
+  }
+
+  .thStatus,
+  .tdStatus {
+    padding-right: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tableWrapper {
+    margin: -20px -20px -20px -20px;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .table {
+    font-size: 12px;
+  }
+
+  .table th,
+  .table td {
+    padding: 10px 8px;
+  }
+
+  .thDate,
+  .tdDate {
+    padding-left: 8px;
+  }
+
+  .thStatus,
+  .tdStatus {
+    padding-right: 8px;
+  }
+
+  .dateGroup {
+    gap: 2px;
+  }
+
+  .dateFull {
+    font-size: 12px;
+  }
+
+  .timeRange {
+    font-size: 11px;
+  }
+
+  .feeGroup {
+    gap: 4px;
+  }
+
+  .amount {
+    font-size: 12px;
+  }
+}
