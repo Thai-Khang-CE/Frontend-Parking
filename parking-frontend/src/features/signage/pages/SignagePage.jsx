@@ -11,46 +11,43 @@ import styles from './SignagePage.module.css';
 function SignagePage() {
   const { data, display, loading, error, timeAgo } = useSignage();
 
-  // Handle loading state
   if (loading && !data) {
     return (
       <div className={styles.page}>
         <div className={styles.header}>
           <h1 className={styles.title}>Parking Signage</h1>
-          <p className={styles.subtitle}>Driver Display View</p>
+          <p className={styles.subtitle}>Driver display view</p>
         </div>
-        <div className={styles.loading}>
-          <div className={styles.spinner} />
+        <div className="app-state app-state--loading">
+          <div className="app-spinner" />
           <p>Loading parking data...</p>
         </div>
       </div>
     );
   }
 
-  // Handle error state
   if (error) {
     return (
       <div className={styles.page}>
         <div className={styles.header}>
           <h1 className={styles.title}>Parking Signage</h1>
-          <p className={styles.subtitle}>Driver Display View</p>
+          <p className={styles.subtitle}>Driver display view</p>
         </div>
-        <div className={styles.error}>
+        <div className="app-state app-state--error">
           <p>Error loading signage: {error}</p>
         </div>
       </div>
     );
   }
 
-  // Handle empty data state
   if (!data) {
     return (
       <div className={styles.page}>
         <div className={styles.header}>
           <h1 className={styles.title}>Parking Signage</h1>
-          <p className={styles.subtitle}>Driver Display View</p>
+          <p className={styles.subtitle}>Driver display view</p>
         </div>
-        <div className={styles.empty}>
+        <div className="app-state app-state--empty">
           <p>No signage data available</p>
         </div>
       </div>
@@ -59,21 +56,19 @@ function SignagePage() {
 
   return (
     <div className={styles.page}>
-      {/* Minimal header - hidden by default, shows in browser tab */}
       <div className={styles.header}>
         <h1 className={styles.title}>Parking Signage</h1>
         <span className={styles.subtitle}>{loading ? 'updating...' : `Updated ${timeAgo}`}</span>
       </div>
 
-      {/* Full driver-facing display */}
       <div className={styles.displayWrapper}>
         <SignageDisplay data={data} display={display} />
       </div>
 
-      {/* Minimal footer */}
       <div className={styles.footer}>
         <div className={styles.footerInfo}>
           <span className={`${styles.statusDot} ${loading ? styles.pulse : ''}`} />
+          <span>{loading ? 'Refreshing data' : 'Display live'}</span>
         </div>
       </div>
     </div>

@@ -1,118 +1,130 @@
-/**
- * Header Styling (CSS Module)
- * Consistent styling for header across all pages
- * Includes user info and logout button
- */
-
 .header {
-  background-color: #2c3e50;
-  color: #fff;
-  padding: 20px 0;
-  border-bottom: 3px solid #3498db;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background:
+    linear-gradient(135deg, rgba(13, 33, 56, 0.98) 0%, rgba(20, 49, 82, 0.98) 100%);
+  border-bottom: 1px solid rgba(109, 144, 176, 0.22);
+  box-shadow: 0 12px 28px rgba(6, 18, 31, 0.18);
 }
 
 .container {
-  max-width: 1200px;
+  width: min(var(--shell-max-width), calc(100% - 48px));
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 18px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 24px;
 }
 
 .titleSection {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
 }
 
 .title {
   margin: 0;
-  font-size: 28px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-size: clamp(1.55rem, 2vw, 2rem);
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #f7fbff;
 }
 
 .subtitle {
-  margin: 5px 0 0 0;
-  font-size: 14px;
-  color: #bdc3c7;
-  font-weight: 300;
+  margin: 0;
+  color: #a7bed2;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .userSection {
   display: flex;
   align-items: center;
-  gap: 20px;
-  white-space: nowrap;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .userInfo {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(170, 194, 214, 0.15);
+  color: #dce8f2;
   font-size: 14px;
 }
 
 .userName {
-  font-weight: 500;
-  color: #ecf0f1;
+  font-weight: 600;
+  color: #ffffff;
 }
 
 .userRole {
-  background-color: rgba(52, 152, 219, 0.3);
-  color: #bdc3c7;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(53, 146, 230, 0.18);
+  color: #9ad0ff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .logoutButton {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #cb4f43 0%, #af2f23 100%);
+  color: #ffffff;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.2s;
+  box-shadow: 0 10px 24px rgba(175, 47, 35, 0.22);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
 }
 
 .logoutButton:hover {
-  background-color: #c0392b;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(175, 47, 35, 0.28);
+  filter: brightness(1.02);
 }
 
 @media (max-width: 768px) {
-  .header {
-    padding: 15px 0;
-  }
-
   .container {
+    width: min(var(--shell-max-width), calc(100% - 28px));
+    padding: 16px 0;
     flex-direction: column;
-    gap: 10px;
-  }
-
-  .title {
-    font-size: 22px;
-  }
-
-  .subtitle {
-    font-size: 12px;
+    align-items: flex-start;
   }
 
   .userSection {
     width: 100%;
     justify-content: space-between;
-    font-size: 12px;
-    gap: 10px;
   }
 
-  .logoutButton {
-    padding: 6px 12px;
-    font-size: 12px;
+  .userInfo {
+    max-width: 100%;
   }
 }
 
+@media (max-width: 520px) {
+  .userSection {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .userInfo,
+  .logoutButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

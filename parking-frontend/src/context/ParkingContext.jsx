@@ -12,6 +12,7 @@ import {
   getAllZones,
   getDashboardSummary,
   getDashboardData,
+  getZoneDetailData,
   getMonitoringData,
   getGuidanceData,
   getSignageData,
@@ -88,6 +89,10 @@ export function ParkingProvider({ children }) {
     getDashboardData: () => {
       void revision;
       return getDashboardData();
+    },
+    getZoneDetailData: (zoneId) => {
+      void revision;
+      return getZoneDetailData(zoneId);
     },
     getMonitoringData: (zoneId) => {
       void revision;

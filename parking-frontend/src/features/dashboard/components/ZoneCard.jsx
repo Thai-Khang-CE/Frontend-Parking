@@ -1,22 +1,28 @@
 /**
  * ZoneCard Component
- * Displays zone information and occupancy status
+ * Displays zone information and occupancy status.
  */
 
 import styles from './ZoneCard.module.css';
 
-function ZoneCard({ zone }) {
+function ZoneCard({ zone, onClick }) {
   const isFull = zone.status === 'FULL';
   const occupancyColor =
     zone.occupancyPercentage > 80 ? 'high' : zone.occupancyPercentage > 50 ? 'medium' : 'low';
+  const CardTag = onClick ? 'button' : 'div';
 
   return (
-    <div className={`${styles.card} ${isFull ? styles.statusFull : styles.statusAvailable}`}>
-      {/* Header: zone name + status badge */}
+    <CardTag
+      type={onClick ? 'button' : undefined}
+      className={`${styles.card} ${isFull ? styles.statusFull : styles.statusAvailable} ${onClick ? styles.clickable : ''}`}
+      onClick={onClick}
+    >
       <div className={styles.header}>
         <div className={styles.zoneInfo}>
           <h3 className={styles.zoneName}>{zone.name}</h3>
-          <p className={styles.zoneOccupiedLabel}>{zone.occupiedSlots} slots occupied</p>
+          <p className={styles.zoneOccupiedLabel}>
+            {zone.environment} zone - {zone.layoutLabel}
+          </p>
         </div>
         <span className={`${styles.status} ${isFull ? styles.statusFull : styles.statusAvailable}`}>
           <span className={styles.statusDot} />
@@ -24,10 +30,8 @@ function ZoneCard({ zone }) {
         </span>
       </div>
 
-      {/* Large occupancy % — hero number */}
       <div className={styles.occupancyBig}>{zone.occupancyPercentage}%</div>
 
-      {/* Progress bar */}
       <div className={styles.progressSection}>
         <div className={styles.progressBar}>
           <div
@@ -37,7 +41,6 @@ function ZoneCard({ zone }) {
         </div>
       </div>
 
-      {/* Available / Total mini-stats */}
       <div className={styles.stats}>
         <div className={styles.statItem}>
           <div className={styles.statValue}>{zone.availableSlots}</div>
@@ -48,7 +51,14 @@ function ZoneCard({ zone }) {
           <div className={styles.statLabel}>Total</div>
         </div>
       </div>
-    </div>
+
+      {onClick && (
+        <div className={styles.cardAction}>
+          <span>View zone detail</span>
+          <span className={styles.cardActionArrow}>{'->'}</span>
+        </div>
+      )}
+    </CardTag>
   );
 }
 

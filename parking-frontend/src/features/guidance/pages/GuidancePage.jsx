@@ -13,11 +13,16 @@ function GuidancePage() {
 
   if (error) {
     return (
-      <div className={styles.page}>
-        <div className={styles.header}>
-          <h1>Parking Guidance</h1>
+      <div className={`${styles.page} app-page`}>
+        <div className="app-page-header">
+          <div className="app-page-title-wrap">
+            <h1 className="app-page-title">Parking Guidance</h1>
+            <p className="app-page-subtitle">
+              Driver recommendation flow based on current parking availability.
+            </p>
+          </div>
         </div>
-        <div className={styles.error}>
+        <div className="app-state app-state--error">
           <p>Error loading guidance: {error}</p>
         </div>
       </div>
@@ -26,12 +31,17 @@ function GuidancePage() {
 
   if (loading && !data) {
     return (
-      <div className={styles.page}>
-        <div className={styles.header}>
-          <h1>Parking Guidance</h1>
+      <div className={`${styles.page} app-page`}>
+        <div className="app-page-header">
+          <div className="app-page-title-wrap">
+            <h1 className="app-page-title">Parking Guidance</h1>
+            <p className="app-page-subtitle">
+              Driver recommendation flow based on current parking availability.
+            </p>
+          </div>
         </div>
-        <div className={styles.loading}>
-          <div className={styles.spinner} />
+        <div className="app-state app-state--loading">
+          <div className="app-spinner" />
           <p>Loading guidance...</p>
         </div>
       </div>
@@ -40,11 +50,16 @@ function GuidancePage() {
 
   if (!data) {
     return (
-      <div className={styles.page}>
-        <div className={styles.header}>
-          <h1>Parking Guidance</h1>
+      <div className={`${styles.page} app-page`}>
+        <div className="app-page-header">
+          <div className="app-page-title-wrap">
+            <h1 className="app-page-title">Parking Guidance</h1>
+            <p className="app-page-subtitle">
+              Driver recommendation flow based on current parking availability.
+            </p>
+          </div>
         </div>
-        <div className={styles.empty}>
+        <div className="app-state app-state--empty">
           <p>No guidance available</p>
         </div>
       </div>
@@ -52,29 +67,30 @@ function GuidancePage() {
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.header}>
-        <h1>Parking Guidance</h1>
-        <p className={styles.subtitle}>Find your perfect parking spot</p>
+    <div className={`${styles.page} app-page`}>
+      <div className="app-page-header">
+        <div className="app-page-title-wrap">
+          <h1 className="app-page-title">Parking Guidance</h1>
+          <p className="app-page-subtitle">
+            Find the most suitable zone based on live occupancy and route updates.
+          </p>
+        </div>
+        <div className="app-page-meta">
+          <span className="app-pill">{data.status}</span>
+        </div>
       </div>
 
       <div className={styles.content}>
-        {/* Preferred Zone - Prominent Display */}
         <PreferredZoneCard zone={data.preferredZone} status={data.status} />
-
-        {/* Main Guidance Message */}
         <GuidanceMessageBox message={data.guidanceMessage} signageMessage={data.signageMessage} />
-
-        {/* Alternative Zones */}
         {data.alternativeZones && data.alternativeZones.length > 0 && (
           <AlternativeZonesGrid zones={data.alternativeZones} />
         )}
       </div>
 
-      {/* Info note - guidance driven from Monitoring */}
       <div className={styles.actions}>
-        <p className={styles.note}>
-          Guidance updates automatically when Monitoring refreshes slots
+        <p className={`app-note ${styles.note}`}>
+          Guidance updates automatically when Monitoring refreshes zone availability.
         </p>
       </div>
     </div>

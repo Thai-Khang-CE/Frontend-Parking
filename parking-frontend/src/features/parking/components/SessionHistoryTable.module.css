@@ -74,6 +74,10 @@
   background-color: #f8f9fa;
 }
 
+.table tbody tr.recentRow {
+  background: linear-gradient(90deg, rgba(232, 248, 237, 0.95), rgba(244, 249, 255, 0.9));
+}
+
 .table td {
   padding: 14px 16px;
   color: #333;
@@ -174,6 +178,12 @@
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
+}
+
+.statusBadge.recent {
+  background-color: #e6f6ec;
+  color: #146c43;
+  border: 1px solid #bfe5cc;
 }
 
 @media (max-width: 1024px) {

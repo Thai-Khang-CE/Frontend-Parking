@@ -5,7 +5,7 @@
  * Available to: admin only
  */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   getCurrentTariffs,
   runFeeCalculation,
@@ -14,29 +14,18 @@ import {
 import styles from "./FeeCalculationPage.module.css";
 
 function FeeCalculationPage() {
-  const [tariffs, setTariffs] = useState(null);
-  const [calculationHistory, setCalculationHistory] = useState([]);
+  const [tariffs] = useState(() => getCurrentTariffs());
+  const [calculationHistory, setCalculationHistory] = useState(() => getCalculationHistory());
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationResult, setCalculationResult] = useState(null);
   const [showResult, setShowResult] = useState(false);
-  const [loading, setLoading] = useState(true);
 
-  // Load tariffs and history on mount
-  useEffect(() => {
-    const tariffData = getCurrentTariffs();
-    setTariffs(tariffData);
-    setCalculationHistory(getCalculationHistory());
-    setLoading(false);
-  }, []);
-
-  // Handle fee calculation trigger
   const handleRunCalculation = async () => {
     setIsCalculating(true);
     try {
       const result = await runFeeCalculation();
       setCalculationResult(result);
       setShowResult(true);
-      // Update history
       const historyAfterCalc = [
         {
           id: `calc-new-${Date.now()}`,
@@ -63,31 +52,21 @@ function FeeCalculationPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.header}>
-          <h1>Fee Calculation & Tariffs</h1>
-        </div>
-        <div className={styles.loadingContainer}>
-          <div className={styles.spinner} />
-          <p>Loading fee calculation settings...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className={styles.page}>
-      {/* Page Header */}
-      <div className={styles.header}>
-        <h1>Fee Calculation & Tariffs</h1>
-        <p className={styles.subtitle}>
-          Manage parking fees and run billing calculations
-        </p>
+    <div className={`${styles.page} app-page`}>
+      <div className="app-page-header">
+        <div className="app-page-title-wrap">
+          <h1 className="app-page-title">Fee Calculation and Tariffs</h1>
+          <p className="app-page-subtitle">
+            Manage tariff settings, run the billing cycle, and review prior calculation history.
+          </p>
+        </div>
+        <div className="app-page-meta">
+          <span className="app-pill">Admin tools</span>
+          {tariffs && <span className="app-pill">{tariffs.tariffs.length} zone tariffs</span>}
+        </div>
       </div>
 
-      {/* Fee Calculation Section */}
       <section className={styles.section}>
         <div className={styles.sectionHead}>
           <h2 className={styles.sectionTitle}>Run Fee Calculation</h2>
@@ -103,7 +82,7 @@ function FeeCalculationPage() {
               bills for the April 2024 billing cycle.
             </p>
             <div className={styles.cautionBox}>
-              <span className={styles.cautionIcon}>⚠️</span>
+              <span className={styles.cautionIcon}>!</span>
               <span>
                 This action will process all parking sessions and generate
                 bills. Existing bills will not be overwritten.
@@ -121,12 +100,11 @@ function FeeCalculationPage() {
                 Calculating...
               </>
             ) : (
-              "▶ Run Fee Calculation"
+              "Run Fee Calculation"
             )}
           </button>
         </div>
 
-        {/* Calculation Result Modal */}
         {showResult && calculationResult && (
           <div className={styles.resultModal}>
             <div
@@ -134,7 +112,7 @@ function FeeCalculationPage() {
             >
               <div className={styles.resultHeader}>
                 <span className={styles.resultIcon}>
-                  {calculationResult.success ? "✓" : "✗"}
+                  {calculationResult.success ? "OK" : "X"}
                 </span>
                 <h4>
                   {calculationResult.success
@@ -174,8 +152,7 @@ function FeeCalculationPage() {
                   <div className={styles.detailRow}>
                     <span className={styles.detailLabel}>Total Fees:</span>
                     <span className={styles.detailValue}>
-                      ₫
-                      {calculationResult.details.totalFeesGenerated.toLocaleString()}
+                      VND {calculationResult.details.totalFeesGenerated.toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -192,7 +169,6 @@ function FeeCalculationPage() {
         )}
       </section>
 
-      {/* Current Tariffs Section */}
       {tariffs && (
         <section className={styles.section}>
           <div className={styles.sectionHead}>
@@ -212,13 +188,13 @@ function FeeCalculationPage() {
                   <div className={styles.tariffItem}>
                     <span className={styles.tariffLabel}>Hourly Rate:</span>
                     <span className={styles.tariffValue}>
-                      ₫{tariff.hourlyRate.toLocaleString()}
+                      VND {tariff.hourlyRate.toLocaleString()}
                     </span>
                   </div>
                   <div className={styles.tariffItem}>
                     <span className={styles.tariffLabel}>Daily Max:</span>
                     <span className={styles.tariffValue}>
-                      ₫{tariff.dailyMax.toLocaleString()}
+                      VND {tariff.dailyMax.toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -226,15 +202,14 @@ function FeeCalculationPage() {
             ))}
           </div>
 
-          {/* Special Rates */}
           <div className={styles.specialRatesSection}>
-            <h3>Special Rates & Passes</h3>
+            <h3>Special Rates and Passes</h3>
             <div className={styles.specialRatesGrid}>
               {tariffs.specialRates.map((rate) => (
                 <div key={rate.id} className={styles.specialRateCard}>
                   <h5>{rate.name}</h5>
                   <div className={styles.specialPrice}>
-                    ₫{rate.price.toLocaleString()}
+                    VND {rate.price.toLocaleString()}
                   </div>
                   <p className={styles.specialDescription}>
                     {rate.description}
@@ -242,7 +217,7 @@ function FeeCalculationPage() {
                   <ul className={styles.specialBenefits}>
                     {rate.benefits.map((benefit, idx) => (
                       <li key={idx}>
-                        <span className={styles.benefitCheck}>✓</span> {benefit}
+                        <span className={styles.benefitCheck}>+</span> {benefit}
                       </li>
                     ))}
                   </ul>
@@ -264,7 +239,6 @@ function FeeCalculationPage() {
         </section>
       )}
 
-      {/* Calculation History Section */}
       {calculationHistory && calculationHistory.length > 0 && (
         <section className={styles.section}>
           <div className={styles.sectionHead}>
@@ -304,7 +278,7 @@ function FeeCalculationPage() {
                     </td>
                     <td className={styles.numberCell}>{calc.billsGenerated}</td>
                     <td className={styles.moneyCell}>
-                      ₫{calc.totalFees.toLocaleString()}
+                      VND {calc.totalFees.toLocaleString()}
                     </td>
                     <td>
                       <span

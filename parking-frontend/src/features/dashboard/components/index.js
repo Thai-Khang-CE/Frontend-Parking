@@ -5,3 +5,4 @@
 
 export { default as SummaryCard } from './SummaryCard';
 export { default as ZoneCard } from './ZoneCard';
+export { default as ParkingMiniMap } from './ParkingMiniMap';

@@ -15,15 +15,15 @@ function ReceiptModal({ result, onClose }) {
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <button className={styles.closeBtn} onClick={onClose}>
-          ×
+          x
         </button>
 
         <div className={styles.content}>
           {isSuccess ? (
             <>
-              <div className={styles.successIcon}>✓</div>
+              <div className={styles.successIcon}>OK</div>
               <h2 className={styles.title}>Payment Successful</h2>
-              <p className={styles.subtitle}>Your payment has been processed</p>
+              <p className={styles.subtitle}>Your payment has been processed.</p>
 
               <div className={styles.details}>
                 <div className={styles.detailRow}>
@@ -71,12 +71,12 @@ function ReceiptModal({ result, onClose }) {
             <>
               <div className={styles.errorIcon}>!</div>
               <h2 className={styles.title}>Payment Failed</h2>
-              <p className={styles.subtitle}>Unable to process payment</p>
+              <p className={styles.subtitle}>Unable to process payment.</p>
 
               <div className={styles.errorDetails}>
                 <p className={styles.errorMessage}>
                   {result.error ||
-                    "An error occurred during payment processing"}
+                    "An error occurred during payment processing."}
                 </p>
               </div>
 
@@ -88,7 +88,7 @@ function ReceiptModal({ result, onClose }) {
           )}
 
           <button className={styles.closeModalBtn} onClick={onClose}>
-            {isSuccess ? "Go to Dashboard" : "Try Again"}
+            {isSuccess ? "Return to Payment" : "Try Again"}
           </button>
         </div>
       </div>

@@ -114,11 +114,20 @@ export const getMyParkingData = (userId = 'user-001') => {
 };
 
 /**
+ * Calculate raw duration in hours
+ */
+export const calculateDurationHours = (entryTime, endTime = new Date()) => {
+  const start = new Date(entryTime);
+  const end = new Date(endTime);
+  const elapsedMs = Math.max(0, end - start);
+  return Number((elapsedMs / (1000 * 60 * 60)).toFixed(2));
+};
+
+/**
  * Calculate elapsed time in human-readable format
  */
-export const calculateElapsedTime = (entryTime) => {
-  const now = new Date();
-  const elapsedMs = now - new Date(entryTime);
+export const calculateElapsedTime = (entryTime, endTime = new Date()) => {
+  const elapsedMs = Math.max(0, new Date(endTime) - new Date(entryTime));
   const elapsedHours = Math.floor(elapsedMs / (1000 * 60 * 60));
   const elapsedMinutes = Math.floor((elapsedMs % (1000 * 60 * 60)) / (1000 * 60));
   
@@ -132,9 +141,8 @@ export const calculateElapsedTime = (entryTime) => {
  * Calculate estimated fee based on duration and rate
  * Mock rate: 10,000 VND per hour
  */
-export const calculateEstimatedFee = (entryTime, hourlyRate = 10000) => {
-  const now = new Date();
-  const elapsedMs = now - new Date(entryTime);
+export const calculateEstimatedFee = (entryTime, hourlyRate = 10000, endTime = new Date()) => {
+  const elapsedMs = Math.max(0, new Date(endTime) - new Date(entryTime));
   const elapsedHours = elapsedMs / (1000 * 60 * 60);
   const roundedHours = Math.ceil(elapsedHours);
   return roundedHours * hourlyRate;

@@ -15,6 +15,7 @@ import LoginPage from "../features/auth/pages/LoginPage";
 import { MyParkingPage, PaymentPage } from "../features/parking";
 import { FeeCalculationPage, BillsPage } from "../features/admin";
 import { GateTerminalPage } from "../features/terminal";
+import ZoneDetailPage from "../features/zones/pages/ZoneDetailPage";
 
 /**
  * Role definitions:
@@ -41,6 +42,13 @@ export const routes = [
     showInNav: true,
   },
   // Guidance - accessible to all authenticated users
+  {
+    path: "/zones/:zoneId",
+    element: <ZoneDetailPage />,
+    label: "Zone Detail",
+    requiresAuth: true,
+    hideInNav: true,
+  },
   {
     path: "/guidance",
     element: <GuidancePage />,

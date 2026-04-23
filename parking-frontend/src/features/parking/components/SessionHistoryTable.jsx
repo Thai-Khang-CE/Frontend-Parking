@@ -6,7 +6,23 @@
 import { formatDate, formatCurrency, formatTime } from '../../../mock/myParkingMock';
 import styles from './SessionHistoryTable.module.css';
 
-function SessionHistoryTable({ sessions = [] }) {
+function formatDuration(session) {
+  if (session.durationLabel) {
+    return session.durationLabel;
+  }
+
+  if (typeof session.duration === 'number') {
+    return `${session.duration.toFixed(2)}h`;
+  }
+
+  if (session.duration) {
+    return String(session.duration);
+  }
+
+  return '--';
+}
+
+function SessionHistoryTable({ sessions = [], highlightSessionId = null }) {
   if (sessions.length === 0) {
     return (
       <div className={styles.container}>
@@ -34,38 +50,43 @@ function SessionHistoryTable({ sessions = [] }) {
             </tr>
           </thead>
           <tbody>
-            {sessions.map((session) => (
-              <tr key={session.id} className={styles.row}>
-                <td className={styles.tdDate}>
-                  <div className={styles.dateGroup}>
-                    <div className={styles.dateFull}>{formatDate(session.entryTime)}</div>
-                    <div className={styles.timeRange}>
-                      {formatTime(session.entryTime)} - {formatTime(session.exitTime)}
+            {sessions.map((session) => {
+              const isHighlighted = session.id === highlightSessionId;
+
+              return (
+                <tr
+                  key={session.id}
+                  className={`${styles.row} ${isHighlighted ? styles.recentRow : ''}`}
+                >
+                  <td className={styles.tdDate}>
+                    <div className={styles.dateGroup}>
+                      <div className={styles.dateFull}>{formatDate(session.entryTime)}</div>
+                      <div className={styles.timeRange}>
+                        {formatTime(session.entryTime)} - {formatTime(session.exitTime)}
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td className={styles.tdZone}>
-                  <span className={styles.zoneBadge}>{session.zoneName}</span>
-                </td>
-                <td className={styles.tdSlot}>{session.slot}</td>
-                <td className={styles.tdDuration}>
-                  {session.duration.toFixed(2)}h
-                </td>
-                <td className={styles.tdFee}>
-                  <div className={styles.feeGroup}>
-                    <span className={styles.amount}>{formatCurrency(session.fee)}</span>
-                    <span className={`${styles.paymentBadge} ${session.paid ? styles.paid : styles.unpaid}`}>
-                      {session.paid ? '✓ Paid' : 'Unpaid'}
+                  </td>
+                  <td className={styles.tdZone}>
+                    <span className={styles.zoneBadge}>{session.zoneName}</span>
+                  </td>
+                  <td className={styles.tdSlot}>{session.slot}</td>
+                  <td className={styles.tdDuration}>{formatDuration(session)}</td>
+                  <td className={styles.tdFee}>
+                    <div className={styles.feeGroup}>
+                      <span className={styles.amount}>{formatCurrency(session.fee)}</span>
+                      <span className={`${styles.paymentBadge} ${session.paid ? styles.paid : styles.unpaid}`}>
+                        {session.paid ? 'Paid' : 'Unpaid'}
+                      </span>
+                    </div>
+                  </td>
+                  <td className={styles.tdStatus}>
+                    <span className={`${styles.statusBadge} ${isHighlighted ? styles.recent : styles.completed}`}>
+                      {isHighlighted ? 'Recently exited' : 'Completed'}
                     </span>
-                  </div>
-                </td>
-                <td className={styles.tdStatus}>
-                  <span className={`${styles.statusBadge} ${styles.completed}`}>
-                    Completed
-                  </span>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

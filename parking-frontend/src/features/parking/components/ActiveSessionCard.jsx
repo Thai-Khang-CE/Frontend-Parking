@@ -17,7 +17,6 @@ function ActiveSessionCard({ session, onExit }) {
       </div>
 
       <div className={styles.content}>
-        {/* Vehicle Info */}
         <div className={styles.section}>
           <h4 className={styles.sectionTitle}>Vehicle</h4>
           <div className={styles.vehicleInfo}>
@@ -32,7 +31,6 @@ function ActiveSessionCard({ session, onExit }) {
           </div>
         </div>
 
-        {/* Parking Location */}
         <div className={styles.section}>
           <h4 className={styles.sectionTitle}>Parking Location</h4>
           <div className={styles.locationInfo}>
@@ -53,9 +51,8 @@ function ActiveSessionCard({ session, onExit }) {
           </div>
         </div>
 
-        {/* Timing & Cost */}
         <div className={styles.section}>
-          <h4 className={styles.sectionTitle}>Timing & Fees</h4>
+          <h4 className={styles.sectionTitle}>Timing and Fees</h4>
           <div className={styles.timingInfo}>
             <div className={styles.timingRow}>
               <span className={styles.label}>Entry Time:</span>
@@ -72,13 +69,12 @@ function ActiveSessionCard({ session, onExit }) {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className={styles.actions}>
-          <button className={styles.exitButton} onClick={onExit}>
-            🚪 Exit Parking
+          <button type="button" className={styles.exitButton} onClick={onExit}>
+            Exit Parking
           </button>
-          <button className={styles.extendButton}>
-            ⏱️ Extend Time
+          <button type="button" className={styles.extendButton}>
+            Extend Time
           </button>
         </div>
       </div>

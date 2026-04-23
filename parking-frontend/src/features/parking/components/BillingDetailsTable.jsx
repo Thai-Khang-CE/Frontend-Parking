@@ -3,44 +3,52 @@
  * Displays unpaid parking sessions and allows selection
  */
 
+import { useEffect, useRef } from "react";
 import { formatCurrency, formatDate } from '../../../mock/paymentMock';
 import styles from './BillingDetailsTable.module.css';
 
-function BillingDetailsTable({ 
-  sessions = [], 
+function BillingDetailsTable({
+  sessions = [],
   selectedIds = [],
   onToggleSelection,
   onSelectAll,
   onDeselectAll
 }) {
+  const selectAllRef = useRef(null);
+  const allSelected = sessions.length > 0 && selectedIds.length === sessions.length;
+  const someSelected = selectedIds.length > 0 && selectedIds.length < sessions.length;
+
+  useEffect(() => {
+    if (selectAllRef.current) {
+      selectAllRef.current.indeterminate = someSelected;
+    }
+  }, [someSelected]);
+
   if (sessions.length === 0) {
     return (
       <div className={styles.container}>
         <h3 className={styles.title}>Unpaid Sessions</h3>
         <div className={styles.empty}>
           <p>No unpaid parking sessions</p>
-          <span className={styles.emoji}>✅</span>
-          <p className={styles.message}>Your account is up to date!</p>
+          <span className={styles.emoji}>OK</span>
+          <p className={styles.message}>Your account is up to date.</p>
         </div>
       </div>
     );
   }
-
-  const allSelected = sessions.length > 0 && selectedIds.length === sessions.length;
-  const someSelected = selectedIds.length > 0 && selectedIds.length < sessions.length;
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h3 className={styles.title}>Unpaid Sessions</h3>
         <div className={styles.selectActions}>
-          <button 
+          <button
             className={styles.selectButton}
             onClick={onSelectAll}
           >
             Select All
           </button>
-          <button 
+          <button
             className={styles.selectButton}
             onClick={onDeselectAll}
           >
@@ -54,10 +62,10 @@ function BillingDetailsTable({
           <thead>
             <tr>
               <th className={styles.thCheckbox}>
-                <input 
-                  type="checkbox" 
+                <input
+                  ref={selectAllRef}
+                  type="checkbox"
                   checked={allSelected}
-                  indeterminate={someSelected}
                   onChange={() => allSelected ? onDeselectAll() : onSelectAll()}
                   className={styles.checkbox}
                 />
@@ -75,8 +83,8 @@ function BillingDetailsTable({
               return (
                 <tr key={session.id} className={`${styles.row} ${isSelected ? styles.selected : ''}`}>
                   <td className={styles.tdCheckbox}>
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       checked={isSelected}
                       onChange={() => onToggleSelection(session.id)}
                       className={styles.checkbox}

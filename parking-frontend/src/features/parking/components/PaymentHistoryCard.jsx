@@ -3,7 +3,7 @@
  * Displays past payment transactions
  */
 
-import { formatCurrency, formatDate } from "../../../mock/paymentMock";
+import { formatCurrency } from "../../../mock/paymentMock";
 import styles from "./PaymentHistoryCard.module.css";
 
 function PaymentHistoryCard({ transactions = [] }) {
@@ -12,10 +12,10 @@ function PaymentHistoryCard({ transactions = [] }) {
       <div className={styles.container}>
         <h3 className={styles.title}>Payment History</h3>
         <div className={styles.empty}>
-          <p className={styles.emptyIcon}>📋</p>
+          <p className={styles.emptyIcon}>LOG</p>
           <p>No payment transactions yet</p>
           <p className={styles.emptyText}>
-            Your completed payments will appear here
+            Your completed payments will appear here.
           </p>
         </div>
       </div>
@@ -30,7 +30,7 @@ function PaymentHistoryCard({ transactions = [] }) {
           <div key={txn.id} className={styles.transactionItem}>
             <div className={styles.left}>
               <div className={styles.icon}>
-                {txn.status === "completed" ? "✓" : "⚠"}
+                {txn.status === "completed" ? "OK" : "!"}
               </div>
               <div className={styles.txnInfo}>
                 <div className={styles.txnDate}>
@@ -41,7 +41,7 @@ function PaymentHistoryCard({ transactions = [] }) {
                   })}
                 </div>
                 <div className={styles.txnMethod}>
-                  {txn.paymentMethod} • {txn.sessions.length} session
+                  {txn.paymentMethod} | {txn.sessions.length} session
                   {txn.sessions.length > 1 ? "s" : ""}
                 </div>
               </div>

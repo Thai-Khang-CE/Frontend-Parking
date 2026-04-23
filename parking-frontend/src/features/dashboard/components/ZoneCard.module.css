@@ -9,6 +9,9 @@
   background: #fff;
   border-radius: 16px;
   padding: 24px;
+  border: 0;
+  width: 100%;
+  text-align: left;
   transition: box-shadow 0.25s ease, transform 0.25s ease;
   overflow: hidden;
 
@@ -16,6 +19,15 @@
   box-shadow:
     0 1px 2px rgba(15, 23, 42, 0.04),
     0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.24);
+  outline-offset: 3px;
 }
 
 /* Colored top strip — always visible, grows on hover */
@@ -178,6 +190,23 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.cardAction {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cardActionArrow {
+  font-size: 16px;
+  line-height: 1;
 }
 
 /* ── Responsive ── */

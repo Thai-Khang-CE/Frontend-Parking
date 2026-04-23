@@ -10,7 +10,6 @@ function PaymentSummaryCard({
   stats,
   selectedCount,
   amountToPay,
-  isProcessing,
 }) {
   if (!stats) return null;
 
@@ -48,13 +47,13 @@ function PaymentSummaryCard({
 
         {selectedCount === 0 && stats.unpaidCount > 0 && (
           <div className={styles.note}>
-            <p>Select sessions to proceed with payment</p>
+            <p>Select sessions to proceed with payment.</p>
           </div>
         )}
 
         {stats.unpaidCount === 0 && (
           <div className={styles.note}>
-            <p>No unpaid parking sessions</p>
+            <p>No unpaid parking sessions.</p>
           </div>
         )}
       </div>
@@ -62,8 +61,8 @@ function PaymentSummaryCard({
       {selectedCount > 0 && (
         <div className={styles.info}>
           <p>
-            💡 You are about to pay for {selectedCount} parking session
-            {selectedCount > 1 ? "s" : ""}
+            Info: you are about to pay for {selectedCount} parking session
+            {selectedCount > 1 ? "s" : ""}.
           </p>
         </div>
       )}

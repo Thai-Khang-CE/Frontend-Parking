@@ -6,7 +6,7 @@
  * 3. Temporary Exit - Process payment and gate exit
  */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   validateCard,
   processEntry,
@@ -19,22 +19,18 @@ import {
 import styles from "./GateTerminalPage.module.css";
 
 function GateTerminalPage() {
-  // Terminal mode state
-  const [mode, setMode] = useState("menu"); // menu | cardAccess | tempEntry | tempExit
+  const [mode, setMode] = useState("menu");
 
-  // Card Access mode state
   const [cardId, setCardId] = useState("");
   const [cardValidation, setCardValidation] = useState(null);
   const [cardLoading, setCardLoading] = useState(false);
 
-  // Temporary Entry mode state
   const [tempVisitorName, setTempVisitorName] = useState("");
   const [tempVisitorEmail, setTempVisitorEmail] = useState("");
   const [tempVisitorPhone, setTempVisitorPhone] = useState("");
   const [tempPass, setTempPass] = useState(null);
   const [tempLoading, setTempLoading] = useState(false);
 
-  // Temporary Exit mode state
   const [exitTicket, setExitTicket] = useState("");
   const [exitSession, setExitSession] = useState(null);
   const [exitLoading, setExitLoading] = useState(false);
@@ -42,16 +38,8 @@ function GateTerminalPage() {
   const [exitPaymentResult, setExitPaymentResult] = useState(null);
   const [exitProcessing, setExitProcessing] = useState(false);
 
-  // Gate status
-  const [gateStatus, setGateStatus] = useState(null);
+  const [gateStatus] = useState(() => getGateStatus());
 
-  // Load gate status on mount
-  useEffect(() => {
-    const status = getGateStatus();
-    setGateStatus(status);
-  }, []);
-
-  // ─── Card Access Mode ───
   const handleCardInput = (e) => {
     setCardId(e.target.value.toUpperCase());
   };
@@ -65,7 +53,7 @@ function GateTerminalPage() {
     try {
       const result = await validateCard(cardId);
       setCardValidation(result);
-    } catch (error) {
+    } catch {
       setCardValidation({ valid: false, reason: "Error validating card" });
     } finally {
       setCardLoading(false);
@@ -92,7 +80,6 @@ function GateTerminalPage() {
     setMode("menu");
   };
 
-  // ─── Temporary Entry Mode ───
   const handleTempEntrySubmit = async (e) => {
     e.preventDefault();
     if (!tempVisitorName || !tempVisitorEmail || !tempVisitorPhone) return;
@@ -105,7 +92,7 @@ function GateTerminalPage() {
         tempVisitorPhone,
       );
       setTempPass(pass);
-    } catch (error) {
+    } catch {
       setTempPass({ success: false, error: "Failed to issue temporary pass" });
     } finally {
       setTempLoading(false);
@@ -120,7 +107,6 @@ function GateTerminalPage() {
     setMode("menu");
   };
 
-  // ─── Temporary Exit Mode ───
   const handleExitTicketInput = (e) => {
     setExitTicket(e.target.value.toUpperCase());
   };
@@ -139,7 +125,7 @@ function GateTerminalPage() {
       } else {
         setExitSession({ error: result.reason });
       }
-    } catch (error) {
+    } catch {
       setExitSession({ error: "Error retrieving session" });
     } finally {
       setExitLoading(false);
@@ -157,7 +143,7 @@ function GateTerminalPage() {
         selectedPaymentMethod,
       );
       setExitPaymentResult(paymentResult);
-    } catch (error) {
+    } catch {
       setExitPaymentResult({
         success: false,
         error: "Payment processing error",
@@ -175,15 +161,13 @@ function GateTerminalPage() {
     setMode("menu");
   };
 
-  // ─── Render Main Menu ───
   if (mode === "menu") {
     return (
       <div className={styles.terminal}>
         <div className={styles.screen}>
-          {/* Header */}
           <div className={styles.header}>
             <div className={styles.headerTitle}>
-              <span className={styles.headerIcon}>🅿</span>
+              <span className={styles.headerIcon}>P</span>
               <h1>PARKING GATE TERMINAL</h1>
             </div>
             <div className={styles.headerMeta}>
@@ -191,7 +175,7 @@ function GateTerminalPage() {
                 <>
                   <span className={styles.gateId}>{gateStatus.gateId}</span>
                   <span className={styles.gateStatus}>
-                    <span className={styles.statusDot} />{" "}
+                    <span className={styles.statusDot} />
                     {gateStatus.status.toUpperCase()}
                   </span>
                 </>
@@ -199,44 +183,39 @@ function GateTerminalPage() {
             </div>
           </div>
 
-          {/* Main Menu */}
           <div className={styles.menuContainer}>
             <h2>SELECT OPERATION</h2>
 
             <div className={styles.menuGrid}>
-              {/* Card Access Mode */}
               <button
                 className={`${styles.menuButton} ${styles.cardMode}`}
                 onClick={() => setMode("cardAccess")}
               >
-                <span className={styles.modeIcon}>🎫</span>
+                <span className={styles.modeIcon}>ID</span>
                 <span className={styles.modeName}>Card Access</span>
                 <span className={styles.modeDesc}>Scan University ID</span>
               </button>
 
-              {/* Temporary Entry Mode */}
               <button
                 className={`${styles.menuButton} ${styles.tempEntry}`}
                 onClick={() => setMode("tempEntry")}
               >
-                <span className={styles.modeIcon}>👤</span>
+                <span className={styles.modeIcon}>IN</span>
                 <span className={styles.modeName}>Temporary Entry</span>
                 <span className={styles.modeDesc}>Issue Visitor Pass</span>
               </button>
 
-              {/* Temporary Exit Mode */}
               <button
                 className={`${styles.menuButton} ${styles.tempExit}`}
                 onClick={() => setMode("tempExit")}
               >
-                <span className={styles.modeIcon}>🚗</span>
+                <span className={styles.modeIcon}>EX</span>
                 <span className={styles.modeName}>Exit Payment</span>
-                <span className={styles.modeDesc}>Process Exit & Payment</span>
+                <span className={styles.modeDesc}>Process Exit and Payment</span>
               </button>
             </div>
           </div>
 
-          {/* Zone Status Footer */}
           {gateStatus && (
             <div className={styles.footer}>
               <div className={styles.footerContent}>
@@ -267,22 +246,20 @@ function GateTerminalPage() {
     );
   }
 
-  // ─── Render Card Access Mode ───
   if (mode === "cardAccess") {
     return (
       <div className={styles.terminal}>
         <div className={styles.screen}>
           <div className={styles.header}>
             <button className={styles.backBtn} onClick={resetCardMode}>
-              ←
+              {"<"}
             </button>
-            <h1>🎫 CARD ACCESS</h1>
-            <div style={{ width: "44px" }} /> {/* Spacer for alignment */}
+            <h1>CARD ACCESS</h1>
+            <div style={{ width: "44px" }} />
           </div>
 
           <div className={styles.content}>
             {!cardValidation ? (
-              // Input card ID
               <div className={styles.inputForm}>
                 <label>Scan or Enter Card ID:</label>
                 <input
@@ -290,7 +267,7 @@ function GateTerminalPage() {
                   placeholder="ID-XXX-2024"
                   value={cardId}
                   onChange={handleCardInput}
-                  onKeyPress={(e) => e.key === "Enter" && handleCardValidate()}
+                  onKeyDown={(e) => e.key === "Enter" && handleCardValidate()}
                   autoFocus
                   className={styles.cardInput}
                 />
@@ -299,13 +276,12 @@ function GateTerminalPage() {
                   onClick={handleCardValidate}
                   disabled={cardLoading || !cardId.trim()}
                 >
-                  {cardLoading ? "⏳ VALIDATING..." : "✓ VALIDATE CARD"}
+                  {cardLoading ? "VALIDATING..." : "VALIDATE CARD"}
                 </button>
               </div>
             ) : cardValidation.valid && !cardValidation.gateStatus ? (
-              // Show validation result - ready for entry
               <div className={`${styles.result} ${styles.success}`}>
-                <div className={styles.resultIcon}>✓</div>
+                <div className={styles.resultIcon}>OK</div>
                 <h3>Card Valid</h3>
                 <div className={styles.resultInfo}>
                   <div className={styles.infoRow}>
@@ -334,13 +310,12 @@ function GateTerminalPage() {
                   onClick={handleCardEntry}
                   disabled={cardLoading}
                 >
-                  {cardLoading ? "⏳ OPENING GATE..." : "🔓 OPEN GATE & ENTER"}
+                  {cardLoading ? "OPENING GATE..." : "OPEN GATE AND ENTER"}
                 </button>
               </div>
             ) : cardValidation.gateStatus === "OPEN" ? (
-              // Gate opened - entry successful
               <div className={`${styles.result} ${styles.success}`}>
-                <div className={styles.resultIcon}>🚗</div>
+                <div className={styles.resultIcon}>GO</div>
                 <h3>Access Granted</h3>
                 <p className={styles.message}>Gate is opening...</p>
                 <div className={styles.resultInfo}>
@@ -370,19 +345,18 @@ function GateTerminalPage() {
                   </div>
                 </div>
                 <p className={styles.successMsg}>
-                  ✓ Welcome! Please proceed through the gate.
+                  Welcome. Please proceed through the gate.
                 </p>
                 <button
                   className={`${styles.actionBtn} ${styles.secondary}`}
                   onClick={resetCardMode}
                 >
-                  ← RETURN TO MENU
+                  RETURN TO MENU
                 </button>
               </div>
             ) : (
-              // Validation failed
               <div className={`${styles.result} ${styles.error}`}>
-                <div className={styles.resultIcon}>✗</div>
+                <div className={styles.resultIcon}>X</div>
                 <h3>Access Denied</h3>
                 <p className={styles.errorMsg}>{cardValidation.reason}</p>
                 {cardValidation.name && (
@@ -405,7 +379,7 @@ function GateTerminalPage() {
                     setCardValidation(null);
                   }}
                 >
-                  ← TRY AGAIN
+                  TRY AGAIN
                 </button>
               </div>
             )}
@@ -415,22 +389,20 @@ function GateTerminalPage() {
     );
   }
 
-  // ─── Render Temporary Entry Mode ───
   if (mode === "tempEntry") {
     return (
       <div className={styles.terminal}>
         <div className={styles.screen}>
           <div className={styles.header}>
             <button className={styles.backBtn} onClick={resetTempEntry}>
-              ←
+              {"<"}
             </button>
-            <h1>👤 TEMPORARY ENTRY</h1>
+            <h1>TEMPORARY ENTRY</h1>
             <div style={{ width: "44px" }} />
           </div>
 
           <div className={styles.content}>
             {!tempPass ? (
-              // Entry form
               <form
                 className={styles.inputForm}
                 onSubmit={handleTempEntrySubmit}
@@ -475,13 +447,12 @@ function GateTerminalPage() {
                     !tempVisitorPhone
                   }
                 >
-                  {tempLoading ? "⏳ ISSUING PASS..." : "🎫 ISSUE VISITOR PASS"}
+                  {tempLoading ? "ISSUING PASS..." : "ISSUE VISITOR PASS"}
                 </button>
               </form>
             ) : tempPass.success ? (
-              // Success - pass issued
               <div className={`${styles.result} ${styles.success}`}>
-                <div className={styles.resultIcon}>🎫</div>
+                <div className={styles.resultIcon}>PASS</div>
                 <h3>Temporary Pass Issued</h3>
                 <div className={styles.ticketBox}>
                   <div className={styles.ticketContent}>
@@ -522,19 +493,18 @@ function GateTerminalPage() {
                   </div>
                 </div>
                 <p className={styles.successMsg}>
-                  ✓ Please keep this pass with you. Gate is opening...
+                  Pass issued. Gate is opening...
                 </p>
                 <button
                   className={`${styles.actionBtn} ${styles.secondary}`}
                   onClick={resetTempEntry}
                 >
-                  ← RETURN TO MENU
+                  RETURN TO MENU
                 </button>
               </div>
             ) : (
-              // Error
               <div className={`${styles.result} ${styles.error}`}>
-                <div className={styles.resultIcon}>✗</div>
+                <div className={styles.resultIcon}>X</div>
                 <h3>Pass Issuance Failed</h3>
                 <p className={styles.errorMsg}>
                   {tempPass.error || "Unable to issue temporary pass"}
@@ -543,7 +513,7 @@ function GateTerminalPage() {
                   className={`${styles.actionBtn} ${styles.secondary}`}
                   onClick={() => setTempPass(null)}
                 >
-                  ← TRY AGAIN
+                  TRY AGAIN
                 </button>
               </div>
             )}
@@ -553,22 +523,20 @@ function GateTerminalPage() {
     );
   }
 
-  // ─── Render Temporary Exit Mode ───
   if (mode === "tempExit") {
     return (
       <div className={styles.terminal}>
         <div className={styles.screen}>
           <div className={styles.header}>
             <button className={styles.backBtn} onClick={resetExitMode}>
-              ←
+              {"<"}
             </button>
-            <h1>🚗 EXIT PAYMENT</h1>
+            <h1>EXIT PAYMENT</h1>
             <div style={{ width: "44px" }} />
           </div>
 
           <div className={styles.content}>
             {!exitSession && !exitPaymentResult ? (
-              // Retrieve session
               <div className={styles.inputForm}>
                 <label>Scan or Enter Ticket Number:</label>
                 <input
@@ -576,7 +544,7 @@ function GateTerminalPage() {
                   placeholder="TMP-XXXXXXXX"
                   value={exitTicket}
                   onChange={handleExitTicketInput}
-                  onKeyPress={(e) =>
+                  onKeyDown={(e) =>
                     e.key === "Enter" && handleRetrieveSession()
                   }
                   autoFocus
@@ -587,13 +555,12 @@ function GateTerminalPage() {
                   onClick={handleRetrieveSession}
                   disabled={exitLoading || !exitTicket.trim()}
                 >
-                  {exitLoading ? "⏳ RETRIEVING..." : "🔍 RETRIEVE SESSION"}
+                  {exitLoading ? "RETRIEVING..." : "RETRIEVE SESSION"}
                 </button>
               </div>
             ) : exitSession?.error && !exitPaymentResult ? (
-              // Session not found
               <div className={`${styles.result} ${styles.error}`}>
-                <div className={styles.resultIcon}>✗</div>
+                <div className={styles.resultIcon}>X</div>
                 <h3>Session Not Found</h3>
                 <p className={styles.errorMsg}>{exitSession.error}</p>
                 <button
@@ -603,11 +570,10 @@ function GateTerminalPage() {
                     setExitSession(null);
                   }}
                 >
-                  ← TRY AGAIN
+                  TRY AGAIN
                 </button>
               </div>
             ) : exitSession && !exitPaymentResult ? (
-              // Session found - show payment method selection
               <div className={styles.paymentForm}>
                 <div className={styles.sessionInfo}>
                   <h3>Parking Summary</h3>
@@ -646,7 +612,7 @@ function GateTerminalPage() {
                       <span className={styles.label}>Amount Due:</span>
                       <span className={`${styles.value} ${styles.green}`}>
                         <strong>
-                          ₫{exitSession.estimatedFee.toLocaleString()}
+                          VND {exitSession.estimatedFee.toLocaleString()}
                         </strong>
                       </span>
                     </div>
@@ -677,17 +643,16 @@ function GateTerminalPage() {
                   disabled={exitProcessing || !selectedPaymentMethod}
                 >
                   {exitProcessing
-                    ? "⏳ PROCESSING PAYMENT..."
-                    : `💳 PROCESS PAYMENT ₫${exitSession.estimatedFee.toLocaleString()}`}
+                    ? "PROCESSING PAYMENT..."
+                    : `PROCESS PAYMENT VND ${exitSession.estimatedFee.toLocaleString()}`}
                 </button>
               </div>
             ) : exitPaymentResult?.success ? (
-              // Payment successful - exit allowed
               <div className={`${styles.result} ${styles.success}`}>
-                <div className={styles.resultIcon}>🔓</div>
+                <div className={styles.resultIcon}>OK</div>
                 <h3>Exit Approved</h3>
                 <p className={styles.message}>
-                  Payment processed successfully!
+                  Payment processed successfully.
                 </p>
                 <div className={styles.resultInfo}>
                   <div className={styles.infoRow}>
@@ -701,7 +666,7 @@ function GateTerminalPage() {
                   <div className={styles.infoRow}>
                     <span className={styles.label}>Amount Paid:</span>
                     <span className={styles.value}>
-                      ₫{exitPaymentResult.amount.toLocaleString()}
+                      VND {exitPaymentResult.amount.toLocaleString()}
                     </span>
                   </div>
                   <div className={styles.infoRow}>
@@ -718,19 +683,18 @@ function GateTerminalPage() {
                   </div>
                 </div>
                 <p className={styles.successMsg}>
-                  ✓ Gate is opening. Please proceed.
+                  Gate is opening. Please proceed.
                 </p>
                 <button
                   className={`${styles.actionBtn} ${styles.secondary}`}
                   onClick={resetExitMode}
                 >
-                  ← RETURN TO MENU
+                  RETURN TO MENU
                 </button>
               </div>
             ) : (
-              // Payment failed
               <div className={`${styles.result} ${styles.error}`}>
-                <div className={styles.resultIcon}>✗</div>
+                <div className={styles.resultIcon}>X</div>
                 <h3>Payment Failed</h3>
                 <p className={styles.errorMsg}>
                   {exitPaymentResult?.error || "Payment processing error"}
@@ -742,7 +706,7 @@ function GateTerminalPage() {
                     setSelectedPaymentMethod(null);
                   }}
                 >
-                  ← TRY AGAIN
+                  TRY AGAIN
                 </button>
               </div>
             )}
@@ -751,6 +715,8 @@ function GateTerminalPage() {
       </div>
     );
   }
+
+  return null;
 }
 
 export default GateTerminalPage;

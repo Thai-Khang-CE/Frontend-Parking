@@ -1,0 +1,224 @@
+.mapCard {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.05),
+    0 14px 32px rgba(15, 23, 42, 0.08);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.title {
+  margin: 0 0 6px;
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.available {
+  background: #10b981;
+}
+
+.full {
+  background: #ef4444;
+}
+
+.mapSurface {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  padding: 20px;
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 30%),
+    linear-gradient(160deg, #e2e8f0 0%, #cbd5e1 100%);
+}
+
+.entryRoad {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  color: #0f172a;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.roadLine {
+  flex: 1;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #334155, #475569);
+  position: relative;
+}
+
+.roadLine::after {
+  content: '';
+  position: absolute;
+  inset: 4px 12px;
+  border-top: 2px dashed rgba(255, 255, 255, 0.65);
+}
+
+.zoneLayout {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.zoneBlock {
+  border: 0;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: left;
+  cursor: pointer;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.zoneBlock:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45),
+    0 14px 24px rgba(15, 23, 42, 0.14);
+}
+
+.zoneBlock:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.28);
+  outline-offset: 2px;
+}
+
+.outdoor {
+  background: linear-gradient(180deg, rgba(14, 165, 233, 0.2), rgba(125, 211, 252, 0.5));
+}
+
+.covered {
+  background: linear-gradient(180deg, rgba(71, 85, 105, 0.15), rgba(148, 163, 184, 0.45));
+}
+
+.hybrid {
+  background: linear-gradient(180deg, rgba(99, 102, 241, 0.12), rgba(250, 204, 21, 0.22), rgba(45, 212, 191, 0.16));
+}
+
+.blockAvailable {
+  border-left: 5px solid #10b981;
+}
+
+.blockFull {
+  border-left: 5px solid #ef4444;
+}
+
+.zoneTop,
+.zoneFoot {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.zoneName {
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.zoneMeta,
+.zoneFoot {
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.zoneCount {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #0f172a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rowsPreview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.rowLine {
+  height: 16px;
+  border-radius: 6px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.9) 0 18px,
+      rgba(148, 163, 184, 0.28) 18px 22px
+    );
+  border: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+@media (max-width: 980px) {
+  .zoneLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .mapCard {
+    padding: 18px;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .legend {
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+
+  .mapSurface {
+    padding: 16px;
+  }
+}

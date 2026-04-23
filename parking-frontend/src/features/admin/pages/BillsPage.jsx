@@ -5,7 +5,7 @@
  * Available to: admin only
  */
 
-import { useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import {
   getBillingData,
   getBillStatusInfo,
@@ -13,55 +13,34 @@ import {
 import styles from "./BillsPage.module.css";
 
 function BillsPage() {
-  const [billingData, setBillingData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [billingData] = useState(() => getBillingData());
   const [filterStatus, setFilterStatus] = useState("all");
-  const [filteredBills, setFilteredBills] = useState([]);
   const [selectedBill, setSelectedBill] = useState(null);
-
-  // Load billing data on mount
-  useEffect(() => {
-    const data = getBillingData();
-    setBillingData(data);
-    setFilteredBills(data.bills);
-    setLoading(false);
-  }, []);
-
-  // Handle status filter
-  useEffect(() => {
-    if (billingData) {
-      if (filterStatus === "all") {
-        setFilteredBills(billingData.bills);
-      } else {
-        setFilteredBills(
-          billingData.bills.filter((bill) => bill.status === filterStatus),
-        );
-      }
+  const filteredBills = useMemo(() => {
+    if (!billingData) {
+      return [];
     }
-  }, [filterStatus, billingData]);
 
-  if (loading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.header}>
-          <h1>Bills Management</h1>
-        </div>
-        <div className={styles.loadingContainer}>
-          <div className={styles.spinner} />
-          <p>Loading bills information...</p>
-        </div>
-      </div>
-    );
-  }
+    if (filterStatus === "all") {
+      return billingData.bills;
+    }
+
+    return billingData.bills.filter((bill) => bill.status === filterStatus);
+  }, [billingData, filterStatus]);
 
   if (!billingData) {
     return (
-      <div className={styles.page}>
-        <div className={styles.header}>
-          <h1>Bills Management</h1>
+      <div className={`${styles.page} app-page`}>
+        <div className="app-page-header">
+          <div className="app-page-title-wrap">
+            <h1 className="app-page-title">Bills Management</h1>
+            <p className="app-page-subtitle">
+              Review generated bills, payment status, and collection progress.
+            </p>
+          </div>
         </div>
-        <div className={styles.errorContainer}>
-          <p className={styles.errorMessage}>Failed to load bills data</p>
+        <div className="app-state app-state--error">
+          <p>Failed to load bills data.</p>
         </div>
       </div>
     );
@@ -74,37 +53,39 @@ function BillsPage() {
       : 0;
 
   return (
-    <div className={styles.page}>
-      {/* Page Header */}
-      <div className={styles.header}>
-        <h1>Bills Management</h1>
-        <p className={styles.subtitle}>
-          View and manage parking bills for {billingData.billingCycle}
-        </p>
+    <div className={`${styles.page} app-page`}>
+      <div className="app-page-header">
+        <div className="app-page-title-wrap">
+          <h1 className="app-page-title">Bills Management</h1>
+          <p className="app-page-subtitle">
+            View and manage parking bills for {billingData.billingCycle}.
+          </p>
+        </div>
+        <div className="app-page-meta">
+          <span className="app-pill">{stats.totalBills} bills</span>
+          <span className="app-pill">{collectionRate}% collection</span>
+        </div>
       </div>
 
-      {/* Statistics Cards */}
       <section className={styles.statsSection}>
         <div className={styles.statsGrid}>
-          {/* Total Generated */}
           <div className={styles.statCard}>
-            <div className={styles.statIcon}>📊</div>
+            <div className={styles.statIcon}>G</div>
             <div className={styles.statContent}>
               <div className={styles.statLabel}>Total Generated</div>
               <div className={styles.statValue}>
-                ₫{stats.totalGenerated.toLocaleString()}
+                VND {stats.totalGenerated.toLocaleString()}
               </div>
               <div className={styles.statMeta}>{stats.totalBills} bills</div>
             </div>
           </div>
 
-          {/* Total Paid */}
           <div className={`${styles.statCard} ${styles.paid}`}>
-            <div className={styles.statIcon}>✓</div>
+            <div className={styles.statIcon}>OK</div>
             <div className={styles.statContent}>
               <div className={styles.statLabel}>Total Paid</div>
               <div className={styles.statValue}>
-                ₫{stats.totalPaid.toLocaleString()}
+                VND {stats.totalPaid.toLocaleString()}
               </div>
               <div className={styles.statMeta}>
                 {stats.paidCount} bills paid
@@ -112,13 +93,12 @@ function BillsPage() {
             </div>
           </div>
 
-          {/* Total Unpaid */}
           <div className={`${styles.statCard} ${styles.unpaid}`}>
-            <div className={styles.statIcon}>⚠️</div>
+            <div className={styles.statIcon}>!</div>
             <div className={styles.statContent}>
               <div className={styles.statLabel}>Total Unpaid</div>
               <div className={styles.statValue}>
-                ₫{stats.totalUnpaid.toLocaleString()}
+                VND {stats.totalUnpaid.toLocaleString()}
               </div>
               <div className={styles.statMeta}>
                 {stats.unpaidCount + stats.partialCount} outstanding
@@ -126,9 +106,8 @@ function BillsPage() {
             </div>
           </div>
 
-          {/* Collection Rate */}
           <div className={`${styles.statCard} ${styles.rate}`}>
-            <div className={styles.statIcon}>📈</div>
+            <div className={styles.statIcon}>%</div>
             <div className={styles.statContent}>
               <div className={styles.statLabel}>Collection Rate</div>
               <div className={styles.statValue}>{collectionRate}%</div>
@@ -138,9 +117,7 @@ function BillsPage() {
         </div>
       </section>
 
-      {/* Bills Section */}
       <section className={styles.billsSection}>
-        {/* Filter Controls */}
         <div className={styles.filterBar}>
           <div className={styles.filterLabel}>Filter by Status:</div>
           <div className={styles.filterButtons}>
@@ -171,7 +148,6 @@ function BillsPage() {
           </div>
         </div>
 
-        {/* Bills Table */}
         {filteredBills.length > 0 ? (
           <div className={styles.billsTable}>
             <table>
@@ -209,10 +185,10 @@ function BillsPage() {
                       </td>
                       <td className={styles.sessions}>{bill.sessionsCount}</td>
                       <td className={styles.amount}>
-                        ₫{bill.totalFee.toLocaleString()}
+                        VND {bill.totalFee.toLocaleString()}
                       </td>
                       <td className={styles.paid}>
-                        ₫{bill.paidAmount.toLocaleString()}
+                        VND {bill.paidAmount.toLocaleString()}
                       </td>
                       <td className={styles.statusCell}>
                         <span
@@ -239,15 +215,14 @@ function BillsPage() {
             </table>
           </div>
         ) : (
-          <div className={styles.noBills}>
-            <div className={styles.noBillsIcon}>📭</div>
+          <div className={`${styles.noBills} app-state app-state--empty`}>
+            <div className={styles.noBillsIcon}>0</div>
             <h3>No Bills Found</h3>
-            <p>No bills match the current filter criteria</p>
+            <p>No bills match the current filter criteria.</p>
           </div>
         )}
       </section>
 
-      {/* Bill Details Modal */}
       {selectedBill && (
         <div
           className={styles.modalOverlay}
@@ -260,12 +235,11 @@ function BillsPage() {
                 className={styles.closeBtn}
                 onClick={() => setSelectedBill(null)}
               >
-                ×
+                x
               </button>
             </div>
 
             <div className={styles.modalContent}>
-              {/* Bill Header */}
               <div className={styles.billDetailHeader}>
                 <div className={styles.billDetailItem}>
                   <span className={styles.label}>Bill Number:</span>
@@ -281,7 +255,6 @@ function BillsPage() {
                 </div>
               </div>
 
-              {/* User Info */}
               <div className={styles.section}>
                 <h3>User Information</h3>
                 <div className={styles.detailGrid}>
@@ -304,7 +277,6 @@ function BillsPage() {
                 </div>
               </div>
 
-              {/* Billing Details */}
               <div className={styles.section}>
                 <h3>Billing Details</h3>
                 <div className={styles.detailGrid}>
@@ -337,20 +309,19 @@ function BillsPage() {
                 </div>
               </div>
 
-              {/* Payment Summary */}
               <div className={styles.section}>
                 <h3>Payment Summary</h3>
                 <div className={styles.paymentSummary}>
                   <div className={styles.summaryRow}>
                     <span>Total Fee:</span>
                     <span className={styles.amount}>
-                      ₫{selectedBill.totalFee.toLocaleString()}
+                      VND {selectedBill.totalFee.toLocaleString()}
                     </span>
                   </div>
                   <div className={styles.summaryRow}>
                     <span>Paid Amount:</span>
                     <span className={styles.paidAmount}>
-                      ₫{selectedBill.paidAmount.toLocaleString()}
+                      VND {selectedBill.paidAmount.toLocaleString()}
                     </span>
                   </div>
                   <div
@@ -363,16 +334,12 @@ function BillsPage() {
                   >
                     <span>Outstanding:</span>
                     <span className={styles.outstandingAmount}>
-                      ₫
-                      {(
-                        selectedBill.totalFee - selectedBill.paidAmount
-                      ).toLocaleString()}
+                      VND {(selectedBill.totalFee - selectedBill.paidAmount).toLocaleString()}
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Status */}
               <div className={styles.section}>
                 <div className={styles.statusSection}>
                   <span className={styles.label}>Current Status:</span>

@@ -4,52 +4,63 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { getMyParkingData, calculateElapsedTime, calculateEstimatedFee } from '../../../mock/myParkingMock.js';
+import {
+  getMyParkingData,
+  calculateElapsedTime,
+  calculateEstimatedFee,
+  calculateDurationHours
+} from '../../../mock/myParkingMock.js';
+
+function getInitialParkingState() {
+  try {
+    return {
+      data: getMyParkingData(),
+      error: null
+    };
+  } catch {
+    return {
+      data: null,
+      error: 'Failed to load parking data'
+    };
+  }
+}
 
 export function useMyParking() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [refreshInterval, setRefreshInterval] = useState(1); // refresh every 1 second
+  const [parkingState, setParkingState] = useState(getInitialParkingState);
+  const [exitResult, setExitResult] = useState(null);
+  const { data, error } = parkingState;
+  const loading = false;
 
-  // Initialize data on mount
   useEffect(() => {
-    try {
-      const initialData = getMyParkingData();
-      setData(initialData);
-      setLoading(false);
-    } catch (err) {
-      setError('Failed to load parking data');
-      setLoading(false);
-    }
-  }, []);
-
-  // Update elapsed time and estimated fee for active session
-  useEffect(() => {
-    if (!data?.currentSession) return;
+    if (!data?.currentSession?.id) return;
 
     const timer = setInterval(() => {
-      setData(prevData => {
-        if (!prevData?.currentSession) return prevData;
+      setParkingState((prevState) => {
+        if (!prevState.data?.currentSession) {
+          return prevState;
+        }
 
-        const elapsedTime = calculateElapsedTime(prevData.currentSession.entryTime);
-        const estimatedFee = calculateEstimatedFee(prevData.currentSession.entryTime);
+        const elapsedTime = calculateElapsedTime(prevState.data.currentSession.entryTime);
+        const estimatedFee = calculateEstimatedFee(prevState.data.currentSession.entryTime);
 
         return {
-          ...prevData,
-          currentSession: {
-            ...prevData.currentSession,
-            elapsedTime,
-            estimatedFee
+          ...prevState,
+          data: {
+            ...prevState.data,
+            currentSession: {
+              ...prevState.data.currentSession,
+              elapsedTime,
+              estimatedFee
+            },
+            lastUpdated: new Date()
           }
         };
       });
-    }, 1000); // Update every second
+    }, 1000);
 
     return () => clearInterval(timer);
-  }, [data?.currentSession]);
+  }, [data?.currentSession?.id]);
 
-  // Calculate session statistics
   const stats = data ? {
     totalSessions: data.history.length,
     totalPaid: data.totalPaid,
@@ -58,32 +69,66 @@ export function useMyParking() {
   } : null;
 
   const exitParking = useCallback(() => {
-    // Mock exit functionality
-    if (data?.currentSession) {
-      const exitedSession = {
-        ...data.currentSession,
+    let completedSession = null;
+
+    setParkingState((prevState) => {
+      if (!prevState.data?.currentSession) {
+        return prevState;
+      }
+
+      const exitTime = new Date();
+      const activeSession = prevState.data.currentSession;
+      const duration = calculateDurationHours(activeSession.entryTime, exitTime);
+      const durationLabel = calculateElapsedTime(activeSession.entryTime, exitTime);
+      const fee = calculateEstimatedFee(activeSession.entryTime, 10000, exitTime);
+
+      completedSession = {
+        ...activeSession,
         status: 'completed',
-        exitTime: new Date(),
-        duration: calculateElapsedTime(data.currentSession.entryTime),
-        fee: data.currentSession.estimatedFee,
+        exitTime,
+        duration,
+        durationLabel,
+        fee,
+        estimatedFee: fee,
         paid: false
       };
 
-      setData(prevData => ({
-        ...prevData,
-        currentSession: null,
-        history: [exitedSession, ...prevData.history],
-        totalUnpaid: prevData.totalUnpaid + exitedSession.fee
-      }));
+      return {
+        ...prevState,
+        data: {
+          ...prevState.data,
+          currentSession: null,
+          history: [completedSession, ...prevState.data.history],
+          totalUnpaid: prevState.data.totalUnpaid + fee,
+          lastUpdated: exitTime
+        }
+      };
+    });
+
+    if (completedSession) {
+      setExitResult({
+        sessionId: completedSession.id,
+        zoneName: completedSession.zoneName,
+        slot: completedSession.slot,
+        fee: completedSession.fee,
+        exitTime: completedSession.exitTime,
+        canGoToPayment: completedSession.fee > 0
+      });
     }
-  }, [data]);
+  }, []);
+
+  const dismissExitResult = useCallback(() => {
+    setExitResult(null);
+  }, []);
 
   return {
     data,
     loading,
     error,
     stats,
-    exitParking
+    exitResult,
+    exitParking,
+    dismissExitResult
   };
 }
 
