@@ -13,8 +13,8 @@ import {
   getParkingSlotStateId,
   calculateElapsedTime,
   calculateSessionEstimatedFee,
-  PARKING_HOURLY_RATE,
-  EXTEND_INCREMENT_HOURS
+  PARKING_MONTHLY_RATE,
+  EXTEND_INCREMENT_MONTHS
 } from '../../../mock/myParkingMock.js';
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -141,7 +141,7 @@ export function useMyParking() {
     try {
       await wait(700);
 
-      const updatedSession = extendMyParkingSession(userId, EXTEND_INCREMENT_HOURS);
+      const updatedSession = extendMyParkingSession(userId, EXTEND_INCREMENT_MONTHS);
 
       if (!updatedSession) {
         return false;
@@ -153,9 +153,9 @@ export function useMyParking() {
         sessionId: updatedSession.id,
         zoneName: updatedSession.zoneName,
         slot: updatedSession.slot,
-        addedHours: EXTEND_INCREMENT_HOURS,
-        extensionHours: updatedSession.extensionHours,
-        addedFee: PARKING_HOURLY_RATE * EXTEND_INCREMENT_HOURS,
+        addedMonths: EXTEND_INCREMENT_MONTHS,
+        extensionMonths: updatedSession.extensionHours,
+        addedFee: PARKING_MONTHLY_RATE * EXTEND_INCREMENT_MONTHS,
         estimatedFee: calculateSessionEstimatedFee(updatedSession),
         extendedUntil: updatedSession.extendedUntil
       });

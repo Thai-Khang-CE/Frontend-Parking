@@ -125,86 +125,6 @@
   cursor: not-allowed;
 }
 
-.divider {
-  display: flex;
-  align-items: center;
-  margin: 25px 0;
-  color: #999;
-  font-size: 14px;
-}
-
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: #ddd;
-}
-
-.divider::before {
-  margin-right: 12px;
-}
-
-.divider::after {
-  margin-left: 12px;
-}
-
-.quickLoginSection {
-  margin-bottom: 20px;
-}
-
-.quickLoginTitle {
-  font-size: 12px;
-  font-weight: 600;
-  color: #999;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0 0 12px 0;
-}
-
-.roleButtons {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.roleButton {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 12px;
-  background: #f8f9fa;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 12px;
-  font-weight: 500;
-  color: #555;
-}
-
-.roleButton:hover:not(:disabled) {
-  background: #f0f4ff;
-  border-color: #667eea;
-  color: #667eea;
-}
-
-.roleButton.selected {
-  background: #f0f4ff;
-  border-color: #667eea;
-  color: #667eea;
-}
-
-.roleButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.roleIcon {
-  font-size: 24px;
-}
-
 .ssoSection {
   margin-bottom: 15px;
 }
@@ -315,10 +235,6 @@
 
   .title {
     font-size: 24px;
-  }
-
-  .roleButtons {
-    grid-template-columns: 1fr 1fr;
   }
 
   .credentialsInfo {

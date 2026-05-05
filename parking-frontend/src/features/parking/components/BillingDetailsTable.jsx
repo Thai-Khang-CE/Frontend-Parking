@@ -4,7 +4,11 @@
  */
 
 import { useEffect, useRef } from "react";
-import { formatCurrency, formatDate } from '../../../mock/paymentMock';
+import { formatCurrency } from '../../../mock/paymentMock';
+import {
+  formatSessionBillingPeriod,
+  getSessionBillingMonthDisplay
+} from '../../../mock/myParkingMock';
 import styles from './BillingDetailsTable.module.css';
 
 function BillingDetailsTable({
@@ -70,16 +74,17 @@ function BillingDetailsTable({
                   className={styles.checkbox}
                 />
               </th>
-              <th className={styles.thDate}>Date</th>
+              <th className={styles.thDate}>Billing Month</th>
               <th className={styles.thZone}>Zone</th>
               <th className={styles.thSlot}>Slot</th>
-              <th className={styles.thDuration}>Duration</th>
+              <th className={styles.thDuration}>Billing Period</th>
               <th className={styles.thFee}>Fee</th>
             </tr>
           </thead>
           <tbody>
             {sessions.map((session) => {
               const isSelected = selectedIds.includes(session.id);
+              const billingDate = getSessionBillingMonthDisplay(session);
               return (
                 <tr key={session.id} className={`${styles.row} ${isSelected ? styles.selected : ''}`}>
                   <td className={styles.tdCheckbox}>
@@ -92,10 +97,8 @@ function BillingDetailsTable({
                   </td>
                   <td className={styles.tdDate}>
                     <div className={styles.dateGroup}>
-                      <div className={styles.dateFull}>{formatDate(session.entryTime)}</div>
-                      <div className={styles.timeRange}>
-                        {new Date(session.entryTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} - {new Date(session.exitTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                      </div>
+                      <div className={styles.dateFull}>{billingDate.primary}</div>
+                      <div className={styles.timeRange}>{billingDate.secondary}</div>
                     </div>
                   </td>
                   <td className={styles.tdZone}>
@@ -103,7 +106,7 @@ function BillingDetailsTable({
                   </td>
                   <td className={styles.tdSlot}>{session.slot}</td>
                   <td className={styles.tdDuration}>
-                    {session.duration.toFixed(2)}h
+                    {formatSessionBillingPeriod(session)}
                   </td>
                   <td className={styles.tdFee}>
                     <span className={styles.fee}>{formatCurrency(session.fee)}</span>

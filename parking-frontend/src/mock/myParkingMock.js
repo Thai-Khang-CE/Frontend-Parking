@@ -3,8 +3,8 @@
  * Shared in-memory store for active parking session and parking history.
  */
 
-export const PARKING_HOURLY_RATE = 10000;
-export const EXTEND_INCREMENT_HOURS = 1;
+export const PARKING_MONTHLY_RATE = 800000;
+export const EXTEND_INCREMENT_MONTHS = 1;
 
 const parkingStore = new Map();
 
@@ -35,6 +35,19 @@ const cloneParkingData = (data) => ({
   lastUpdated: cloneDate(data.lastUpdated),
 });
 
+const addMonths = (date, months) => {
+  const nextDate = new Date(date);
+  nextDate.setMonth(nextDate.getMonth() + months);
+  return nextDate;
+};
+
+const formatBillingMonth = (date) => {
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    year: 'numeric'
+  }).format(new Date(date));
+};
+
 const createInitialCurrentSession = () => ({
   id: 'session-2024-001',
   status: 'active',
@@ -48,7 +61,7 @@ const createInitialCurrentSession = () => ({
     color: 'Silver'
   },
   entryTime: new Date(new Date().getTime() - 2 * 60 * 60 * 1000),
-  estimatedFee: 45000,
+  estimatedFee: PARKING_MONTHLY_RATE,
   currency: 'VND',
   notes: 'Covered parking, near entrance',
   extensionHours: 0,
@@ -68,10 +81,10 @@ const createInitialParkingHistory = () => ([
       licensePlate: 'ABC-1234',
       color: 'Silver'
     },
-    entryTime: new Date('2024-04-20T08:30:00'),
-    exitTime: new Date('2024-04-20T12:45:00'),
+    entryTime: new Date('2024-07-20T08:30:00'),
+    exitTime: new Date('2024-07-20T12:45:00'),
     duration: 4.25,
-    fee: 52000,
+    fee: PARKING_MONTHLY_RATE,
     paid: true,
     paymentMethod: 'Credit Card'
   },
@@ -87,10 +100,10 @@ const createInitialParkingHistory = () => ([
       licensePlate: 'ABC-1234',
       color: 'Silver'
     },
-    entryTime: new Date('2024-04-19T10:15:00'),
-    exitTime: new Date('2024-04-19T14:20:00'),
+    entryTime: new Date('2024-06-19T10:15:00'),
+    exitTime: new Date('2024-06-19T14:20:00'),
     duration: 4.08,
-    fee: 48000,
+    fee: PARKING_MONTHLY_RATE,
     paid: true,
     paymentMethod: 'Mobile Wallet'
   },
@@ -106,10 +119,10 @@ const createInitialParkingHistory = () => ([
       licensePlate: 'ABC-1234',
       color: 'Silver'
     },
-    entryTime: new Date('2024-04-18T07:00:00'),
-    exitTime: new Date('2024-04-18T18:30:00'),
+    entryTime: new Date('2024-05-18T07:00:00'),
+    exitTime: new Date('2024-05-18T18:30:00'),
     duration: 11.5,
-    fee: 138000,
+    fee: PARKING_MONTHLY_RATE,
     paid: false,
     paymentMethod: null
   },
@@ -128,7 +141,7 @@ const createInitialParkingHistory = () => ([
     entryTime: new Date('2024-04-17T09:45:00'),
     exitTime: new Date('2024-04-17T13:10:00'),
     duration: 3.42,
-    fee: 36000,
+    fee: PARKING_MONTHLY_RATE,
     paid: true,
     paymentMethod: 'Credit Card'
   }
@@ -194,18 +207,52 @@ export const calculateElapsedTime = (entryTime, endTime = new Date()) => {
 };
 
 /**
- * Calculate estimated fee based on duration and rate
+ * Calculate estimated fee based on monthly billing
  */
-export const calculateEstimatedFee = (entryTime, hourlyRate = PARKING_HOURLY_RATE, endTime = new Date()) => {
+export const calculateBillingMonths = (entryTime, endTime = new Date()) => {
   const elapsedMs = Math.max(0, new Date(endTime) - new Date(entryTime));
-  const elapsedHours = elapsedMs / (1000 * 60 * 60);
-  const roundedHours = Math.ceil(elapsedHours);
-  return roundedHours * hourlyRate;
+  const elapsedMonths = elapsedMs / (1000 * 60 * 60 * 24 * 30);
+  return elapsedMs > 0 ? Math.ceil(elapsedMonths) : 0;
+};
+
+export const calculateEstimatedFee = (entryTime, monthlyRate = PARKING_MONTHLY_RATE, endTime = new Date()) => {
+  const billedMonths = calculateBillingMonths(entryTime, endTime);
+  return billedMonths * monthlyRate;
+};
+
+export const calculateSessionBillingMonths = (session, endTime = new Date()) => {
+  const baseMonths = calculateBillingMonths(
+    session.entryTime,
+    session.exitTime || endTime
+  );
+  return baseMonths + (session.extensionHours || 0);
+};
+
+export const formatSessionBillingPeriod = (session, endTime = new Date()) => {
+  const billedMonths = calculateSessionBillingMonths(session, endTime);
+  return `${billedMonths} month${billedMonths === 1 ? '' : 's'}`;
+};
+
+export const getSessionBillingMonthDisplay = (session) => {
+  const startMonth = formatBillingMonth(session.entryTime);
+  const endMonth = formatBillingMonth(session.exitTime || session.entryTime);
+
+  if (startMonth === endMonth) {
+    return {
+      primary: startMonth,
+      secondary: 'Monthly billing record'
+    };
+  }
+
+  return {
+    primary: `${startMonth} - ${endMonth}`,
+    secondary: 'Monthly billing period'
+  };
 };
 
 export const calculateSessionEstimatedFee = (session, endTime = new Date()) => {
-  const baseFee = calculateEstimatedFee(session.entryTime, PARKING_HOURLY_RATE, endTime);
-  const extensionCharge = (session.extensionHours || 0) * PARKING_HOURLY_RATE;
+  const baseFee = calculateEstimatedFee(session.entryTime, PARKING_MONTHLY_RATE, endTime);
+  const extensionCharge = (session.extensionHours || 0) * PARKING_MONTHLY_RATE;
   return baseFee + extensionCharge;
 };
 
@@ -239,7 +286,7 @@ export const exitMyParkingSession = (userId = 'user-001', exitTime = new Date())
 
 export const extendMyParkingSession = (
   userId = 'user-001',
-  addedHours = EXTEND_INCREMENT_HOURS,
+  addedMonths = EXTEND_INCREMENT_MONTHS,
   updatedAt = new Date()
 ) => {
   const parkingData = ensureParkingData(userId);
@@ -253,10 +300,8 @@ export const extendMyParkingSession = (
     ? new Date(activeSession.extendedUntil)
     : new Date(updatedAt);
 
-  activeSession.extensionHours = (activeSession.extensionHours || 0) + addedHours;
-  activeSession.extendedUntil = new Date(
-    extensionBaseTime.getTime() + addedHours * 60 * 60 * 1000
-  );
+  activeSession.extensionHours = (activeSession.extensionHours || 0) + addedMonths;
+  activeSession.extendedUntil = addMonths(extensionBaseTime, addedMonths);
   activeSession.estimatedFee = calculateSessionEstimatedFee(activeSession, updatedAt);
   parkingData.lastUpdated = cloneDate(updatedAt);
 

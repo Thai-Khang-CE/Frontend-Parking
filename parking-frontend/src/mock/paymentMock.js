@@ -8,6 +8,7 @@ import {
   calculateDurationHours,
   calculateSessionEstimatedFee,
   markMyParkingSessionsPaid,
+  PARKING_MONTHLY_RATE,
 } from "./myParkingMock";
 
 const paymentStore = new Map();
@@ -41,7 +42,7 @@ const createInitialExternalSessions = () => [
     entryTime: new Date("2024-04-17T14:00:00"),
     exitTime: new Date("2024-04-17T17:45:00"),
     duration: 3.75,
-    fee: 45000,
+    fee: PARKING_MONTHLY_RATE,
     paid: false,
     paymentMethod: null,
   },
@@ -53,7 +54,7 @@ const createInitialExternalSessions = () => [
     entryTime: new Date("2024-04-16T08:30:00"),
     exitTime: new Date("2024-04-16T16:20:00"),
     duration: 7.83,
-    fee: 94000,
+    fee: PARKING_MONTHLY_RATE,
     paid: false,
     paymentMethod: null,
   },
@@ -64,7 +65,7 @@ const createInitialTransactions = () => [
     id: "txn-2024-001",
     date: new Date("2024-04-20T13:30:00"),
     sessions: ["session-2024-020"],
-    amount: 52000,
+    amount: PARKING_MONTHLY_RATE,
     paymentMethod: "Credit Card",
     status: "completed",
     transactionId: "TXN-2024-000001",
@@ -78,7 +79,7 @@ const createInitialTransactions = () => [
     id: "txn-2024-002",
     date: new Date("2024-04-19T14:45:00"),
     sessions: ["session-2024-019"],
-    amount: 48000,
+    amount: PARKING_MONTHLY_RATE,
     paymentMethod: "Mobile Wallet",
     status: "completed",
     transactionId: "TXN-2024-000002",

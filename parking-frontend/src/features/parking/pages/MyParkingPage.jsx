@@ -10,9 +10,10 @@ import { useMyParking } from '../hooks';
 import { ActiveSessionCard, SessionHistoryTable, ParkingStatsCard } from '../components';
 import {
   formatCurrency,
+  formatDate,
   formatTime,
-  PARKING_HOURLY_RATE,
-  EXTEND_INCREMENT_HOURS
+  PARKING_MONTHLY_RATE,
+  EXTEND_INCREMENT_MONTHS
 } from '../../../mock/myParkingMock.js';
 import styles from './MyParkingPage.module.css';
 
@@ -24,13 +25,12 @@ function getExtendPreview(session) {
   const extensionBaseTime = session.extendedUntil
     ? new Date(session.extendedUntil)
     : new Date();
-  const extendedUntil = new Date(
-    extensionBaseTime.getTime() + EXTEND_INCREMENT_HOURS * 60 * 60 * 1000
-  );
-  const addedFee = PARKING_HOURLY_RATE * EXTEND_INCREMENT_HOURS;
+  const extendedUntil = new Date(extensionBaseTime);
+  extendedUntil.setMonth(extendedUntil.getMonth() + EXTEND_INCREMENT_MONTHS);
+  const addedFee = PARKING_MONTHLY_RATE * EXTEND_INCREMENT_MONTHS;
 
   return {
-    addedHours: EXTEND_INCREMENT_HOURS,
+    addedMonths: EXTEND_INCREMENT_MONTHS,
     addedFee,
     estimatedFee: (session.estimatedFee || 0) + addedFee,
     extendedUntil,
@@ -182,8 +182,8 @@ function MyParkingPage() {
               <h2>Parking session extended</h2>
               <p>
                 Slot {extendResult.slot} in {extendResult.zoneName} was extended by{' '}
-                {extendResult.addedHours} hour. The session is now reserved until{' '}
-                {formatTime(extendResult.extendedUntil)} and the estimated fee is{' '}
+                {extendResult.addedMonths} month{extendResult.addedMonths > 1 ? 's' : ''}. The session is now reserved until{' '}
+                {formatDate(extendResult.extendedUntil)} and the estimated monthly fee is{' '}
                 {formatCurrency(extendResult.estimatedFee)}.
               </p>
             </div>
@@ -205,10 +205,10 @@ function MyParkingPage() {
           <div className={styles.confirmContent}>
             <span className={styles.confirmIcon}>?</span>
             <div className={styles.confirmText}>
-              <h2>Confirm time extension</h2>
+              <h2>Confirm monthly extension</h2>
               <p>
                 Extend parking for slot {data.currentSession.slot} in {data.currentSession.zoneName}
-                {' '}by {extendPreview.addedHours} hour. This adds approximately{' '}
+                {' '}by {extendPreview.addedMonths} month{extendPreview.addedMonths > 1 ? 's' : ''}. This adds approximately{' '}
                 {formatCurrency(extendPreview.addedFee)} and updates the current
                 total due to {formatCurrency((stats?.totalUnpaid || 0) + extendPreview.estimatedFee)}.
               </p>
@@ -216,7 +216,7 @@ function MyParkingPage() {
           </div>
           <div className={styles.confirmMeta}>
             <span className={styles.confirmPill}>
-              New reserved time: {formatTime(extendPreview.extendedUntil)}
+              New reserved time: {formatDate(extendPreview.extendedUntil)}
             </span>
             <span className={styles.confirmPill}>
               New current estimate: {formatCurrency(extendPreview.estimatedFee)}

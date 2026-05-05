@@ -3,23 +3,15 @@
  * Displays past parking sessions
  */
 
-import { formatDate, formatCurrency, formatTime } from '../../../mock/myParkingMock';
+import {
+  formatCurrency,
+  formatSessionBillingPeriod,
+  getSessionBillingMonthDisplay
+} from '../../../mock/myParkingMock';
 import styles from './SessionHistoryTable.module.css';
 
 function formatDuration(session) {
-  if (session.durationLabel) {
-    return session.durationLabel;
-  }
-
-  if (typeof session.duration === 'number') {
-    return `${session.duration.toFixed(2)}h`;
-  }
-
-  if (session.duration) {
-    return String(session.duration);
-  }
-
-  return '--';
+  return formatSessionBillingPeriod(session);
 }
 
 function SessionHistoryTable({ sessions = [], highlightSessionId = null }) {
@@ -41,10 +33,10 @@ function SessionHistoryTable({ sessions = [], highlightSessionId = null }) {
         <table className={styles.table}>
           <thead>
             <tr>
-              <th className={styles.thDate}>Date</th>
+              <th className={styles.thDate}>Billing Month</th>
               <th className={styles.thZone}>Zone</th>
               <th className={styles.thSlot}>Slot</th>
-              <th className={styles.thDuration}>Duration</th>
+              <th className={styles.thDuration}>Billing Period</th>
               <th className={styles.thFee}>Fee</th>
               <th className={styles.thStatus}>Status</th>
             </tr>
@@ -52,6 +44,7 @@ function SessionHistoryTable({ sessions = [], highlightSessionId = null }) {
           <tbody>
             {sessions.map((session) => {
               const isHighlighted = session.id === highlightSessionId;
+              const billingDate = getSessionBillingMonthDisplay(session);
 
               return (
                 <tr
@@ -60,10 +53,8 @@ function SessionHistoryTable({ sessions = [], highlightSessionId = null }) {
                 >
                   <td className={styles.tdDate}>
                     <div className={styles.dateGroup}>
-                      <div className={styles.dateFull}>{formatDate(session.entryTime)}</div>
-                      <div className={styles.timeRange}>
-                        {formatTime(session.entryTime)} - {formatTime(session.exitTime)}
-                      </div>
+                      <div className={styles.dateFull}>{billingDate.primary}</div>
+                      <div className={styles.timeRange}>{billingDate.secondary}</div>
                     </div>
                   </td>
                   <td className={styles.tdZone}>

@@ -17,7 +17,7 @@ export const getCurrentTariffs = () => {
       {
         id: "tariff-zone-a",
         zoneName: "Zone A",
-        hourlyRate: 12000, // VND
+        monthlyRate: 900000, // VND
         dailyMax: 100000,
         description: "Premium parking near main campus",
         capacity: 150,
@@ -25,7 +25,7 @@ export const getCurrentTariffs = () => {
       {
         id: "tariff-zone-b",
         zoneName: "Zone B",
-        hourlyRate: 12000,
+        monthlyRate: 800000,
         dailyMax: 100000,
         description: "Standard parking near library",
         capacity: 200,
@@ -33,7 +33,7 @@ export const getCurrentTariffs = () => {
       {
         id: "tariff-zone-c",
         zoneName: "Zone C",
-        hourlyRate: 10000,
+        monthlyRate: 650000,
         dailyMax: 80000,
         description: "Economy parking near sports complex",
         capacity: 100,
@@ -51,8 +51,8 @@ export const getCurrentTariffs = () => {
         id: "special-staff",
         name: "Staff Benefit",
         price: 600000,
-        description: "Discounted rate for staff members",
-        benefits: ["50% off regular rates", "Flexible hours"],
+        description: "Discounted monthly rate for staff members",
+        benefits: ["25% off standard monthly rates", "Priority support"],
       },
     ],
     lastUpdated: new Date("2024-04-20"),

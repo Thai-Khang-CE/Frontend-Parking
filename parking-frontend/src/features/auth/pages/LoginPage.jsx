@@ -17,13 +17,6 @@ function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('');
-
-  const ROLES = [
-    { id: 'student', label: 'Student', email: 'student@hcmut.edu.vn' },
-    { id: 'staff', label: 'Staff', email: 'staff@hcmut.edu.vn' },
-    { id: 'admin', label: 'Administrator', email: 'admin@hcmut.edu.vn' }
-  ];
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -40,23 +33,6 @@ function LoginPage() {
     }
 
     const result = login(emailOrUsername, password);
-    if (result.success) {
-      navigate('/');
-    } else {
-      setError(result.error || 'Login failed');
-    }
-    setLoading(false);
-  };
-
-  const handleQuickLogin = async (role) => {
-    setError('');
-    setLoading(true);
-
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const roleConfig = ROLES.find(r => r.id === role);
-    const result = login(roleConfig.email, 'password123', role);
     if (result.success) {
       navigate('/');
     } else {
@@ -135,32 +111,6 @@ function LoginPage() {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-
-        {/* Divider */}
-        <div className={styles.divider}>
-          <span>Or try as a different role</span>
-        </div>
-
-        {/* Quick Login Buttons */}
-        <div className={styles.quickLoginSection}>
-          <p className={styles.quickLoginTitle}>Mock Login (for testing)</p>
-          <div className={styles.roleButtons}>
-            {ROLES.map((role) => (
-              <button
-                key={role.id}
-                type="button"
-                className={`${styles.roleButton} ${
-                  selectedRole === role.id ? styles.selected : ''
-                }`}
-                onClick={() => handleQuickLogin(role.id)}
-                disabled={loading}
-              >
-                <span className={styles.roleIcon}>👤</span>
-                {role.label}
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* SSO Section */}
         <div className={styles.ssoSection}>

@@ -22,7 +22,7 @@ function PaymentSummaryCard({
       <div className={styles.content}>
         {stats.currentEstimatedFee > 0 && (
           <div className={styles.row}>
-            <span className={styles.label}>Current Session Estimate:</span>
+            <span className={styles.label}>Current Session Monthly Estimate:</span>
             <span className={styles.value}>
               {formatCurrency(stats.currentEstimatedFee)}
             </span>
@@ -70,7 +70,7 @@ function PaymentSummaryCard({
         {stats.unpaidCount === 0 && stats.currentEstimatedFee > 0 && (
           <div className={styles.note}>
             <p>
-              Your current session estimate is shown above. It will become payable
+              Your current monthly session estimate is shown above. It will become payable
               after the parking session is exited.
             </p>
           </div>
@@ -88,7 +88,7 @@ function PaymentSummaryCard({
           <p>
             {selectedCount > 0
               ? `Info: you are about to pay for ${selectedCount} parking session${selectedCount > 1 ? "s" : ""}.`
-              : "Info: the current session estimate updates automatically as parking time changes."}
+              : "Info: the current session estimate updates automatically with the monthly billing unit."}
           </p>
         </div>
       )}

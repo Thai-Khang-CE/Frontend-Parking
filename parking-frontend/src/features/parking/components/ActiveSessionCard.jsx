@@ -3,7 +3,7 @@
  * Displays current active parking session
  */
 
-import { formatCurrency, formatTime } from '../../../mock/myParkingMock';
+import { formatCurrency, formatDate, formatTime } from '../../../mock/myParkingMock';
 import styles from './ActiveSessionCard.module.css';
 
 function ActiveSessionCard({
@@ -69,7 +69,7 @@ function ActiveSessionCard({
               <span className={`${styles.value} ${styles.elapsed}`}>{session.elapsedTime || 'calculating...'}</span>
             </div>
             <div className={`${styles.timingRow} ${styles.feeRow}`}>
-              <span className={styles.label}>Estimated Fee:</span>
+              <span className={styles.label}>Estimated Monthly Fee:</span>
               <span className={styles.value}>{formatCurrency(session.estimatedFee, session.currency)}</span>
             </div>
             {session.extensionHours > 0 && (
@@ -77,12 +77,12 @@ function ActiveSessionCard({
                 <div className={styles.timingRow}>
                   <span className={styles.label}>Extended By:</span>
                   <span className={styles.value}>
-                    {session.extensionHours} hour{session.extensionHours > 1 ? 's' : ''}
+                    {session.extensionHours} month{session.extensionHours > 1 ? 's' : ''}
                   </span>
                 </div>
                 <div className={styles.timingRow}>
                   <span className={styles.label}>Extended Until:</span>
-                  <span className={styles.value}>{formatTime(session.extendedUntil)}</span>
+                  <span className={styles.value}>{formatDate(session.extendedUntil)}</span>
                 </div>
               </>
             )}
@@ -100,10 +100,10 @@ function ActiveSessionCard({
             disabled={isExtending || isAwaitingConfirmation}
           >
             {isExtending
-              ? 'Extending...'
+              ? 'Extending Monthly...'
               : isAwaitingConfirmation
-                ? 'Awaiting Confirmation...'
-                : 'Extend Time'}
+                ? 'Awaiting Monthly Confirmation...'
+                : 'Extend by Month'}
           </button>
         </div>
       </div>

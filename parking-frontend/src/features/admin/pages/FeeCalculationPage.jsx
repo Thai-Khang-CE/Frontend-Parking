@@ -58,7 +58,7 @@ function FeeCalculationPage() {
         <div className="app-page-title-wrap">
           <h1 className="app-page-title">Fee Calculation and Tariffs</h1>
           <p className="app-page-subtitle">
-            Manage tariff settings, run the billing cycle, and review prior calculation history.
+            Manage tariff settings, run the monthly billing cycle, and review prior calculation history.
           </p>
         </div>
         <div className="app-page-meta">
@@ -77,7 +77,7 @@ function FeeCalculationPage() {
           <div className={styles.calculationInfo}>
             <h3>April 2024 Billing Cycle</h3>
             <p>
-              Click the button below to calculate parking fees for all users
+              Click the button below to calculate monthly parking fees for all users
               based on current tariffs and parking sessions. This will generate
               bills for the April 2024 billing cycle.
             </p>
@@ -186,15 +186,15 @@ function FeeCalculationPage() {
                 <p className={styles.tariffDescription}>{tariff.description}</p>
                 <div className={styles.tariffDetails}>
                   <div className={styles.tariffItem}>
-                    <span className={styles.tariffLabel}>Hourly Rate:</span>
+                    <span className={styles.tariffLabel}>Monthly Rate:</span>
                     <span className={styles.tariffValue}>
-                      VND {tariff.hourlyRate.toLocaleString()}
+                      VND {tariff.monthlyRate.toLocaleString()}
                     </span>
                   </div>
                   <div className={styles.tariffItem}>
-                    <span className={styles.tariffLabel}>Daily Max:</span>
+                    <span className={styles.tariffLabel}>Billing Unit:</span>
                     <span className={styles.tariffValue}>
-                      VND {tariff.dailyMax.toLocaleString()}
+                      Per month
                     </span>
                   </div>
                 </div>
